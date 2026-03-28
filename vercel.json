@@ -1,7 +1,8 @@
 {
   "rewrites": [
     { "source": "/reserve", "destination": "/reserve.html" },
-    { "source": "/loyalty", "destination": "/loyalty.html" }
+    { "source": "/loyalty", "destination": "/loyalty.html" },
+    { "source": "/admin", "destination": "/admin.html" }
   ],
   "headers": [
     {

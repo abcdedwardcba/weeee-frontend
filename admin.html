@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEEEE Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F4F2; --white: #fff; --ink: #242424; --ink2: #3a3a3a;
+  --ink3: #6b6b6b; --ink4: #9a9a9a; --yellow: #FFCE00; --yellow2: #E0B400;
+  --border: #e8e8e4; --surface: #efefec; --r: 10px; --r2: 14px;
+  --green: #27ae60; --red: #e74c3c; --orange: #e67e22;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
+.login-box{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:40px 32px;width:100%;max-width:360px;}
+.login-logo{font-size:13px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--ink);margin-bottom:4px;}
+.login-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:32px;}
+.login-title{font-size:24px;font-weight:900;letter-spacing:-1px;color:var(--ink);margin-bottom:6px;}
+.login-title span{color:var(--yellow2);}
+.login-sub{font-size:12px;color:var(--ink4);font-weight:500;margin-bottom:24px;}
+
+/* LAYOUT */
+#app{display:none;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--ink);padding:0;z-index:100;display:flex;flex-direction:column;}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sb-logo-name{font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#fff;}
+.sb-logo-tag{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:3px;}
+.sb-nav{flex:1;padding:16px 0;overflow-y:auto;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:11px 20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.45);cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;}
+.sb-item:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.05);}
+.sb-item.active{color:#fff;border-left-color:var(--yellow);background:rgba(255,255,255,0.06);}
+.sb-item .icon{font-size:15px;width:20px;text-align:center;}
+.sb-bottom{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);}
+.sb-logout{width:100%;padding:10px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:rgba(255,255,255,0.4);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:'Montserrat',sans-serif;}
+.sb-logout:hover{border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);}
+
+.main{margin-left:220px;padding:32px;min-height:100vh;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* TOP */
+.page-header{margin-bottom:28px;}
+.page-tag{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;}
+.page-title{font-size:32px;font-weight:900;letter-spacing:-1.5px;text-transform:uppercase;color:var(--ink);line-height:1;}
+.page-title span{color:var(--yellow2);}
+
+/* CARDS */
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:24px;margin-bottom:16px;}
+.card-title{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+
+/* FORM */
+.field{margin-bottom:14px;}
+.field-label{display:block;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:7px;}
+.field-input{width:100%;padding:12px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);color:var(--ink);font-size:14px;font-weight:500;font-family:'Montserrat',sans-serif;outline:none;transition:border-color 0.2s;}
+.field-input:focus{border-color:var(--yellow2);}
+.field-input::placeholder{color:var(--ink4);font-weight:400;}
+select.field-input{cursor:pointer;}
+
+/* BUTTONS */
+.btn{padding:12px 20px;background:var(--ink);color:#fff;border:none;border-radius:var(--r);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:'Montserrat',sans-serif;}
+.btn:hover{background:var(--ink2);transform:translateY(-1px);}
+.btn:disabled{background:var(--border);cursor:not-allowed;transform:none;}
+.btn-yellow{background:var(--yellow);color:var(--ink);}
+.btn-yellow:hover{background:var(--yellow2);}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:#c0392b;}
+.btn-sm{padding:7px 14px;font-size:9px;}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--ink);}
+.btn-full{width:100%;}
+
+/* MSG */
+.msg{font-size:11px;font-weight:600;padding:10px 13px;border-radius:8px;margin-top:10px;display:none;}
+.msg.show{display:block;}
+.msg.success{background:#f0fff4;color:var(--green);border-left:3px solid var(--green);}
+.msg.error{background:#fff0f0;color:var(--red);border-left:3px solid var(--red);}
+.msg.info{background:#fffbea;color:#b8860b;border-left:3px solid var(--yellow);}
+
+/* STATS GRID */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:20px;}
+.stat-n{font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--ink);line-height:1;}
+.stat-l{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-top:5px;}
+.stat-box.yellow{background:var(--yellow);border-color:var(--yellow2);}
+.stat-box.yellow .stat-n,.stat-box.yellow .stat-l{color:var(--ink);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);padding:10px 12px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;}
+td{font-size:13px;font-weight:500;color:var(--ink);padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg);}
+.ticket-badge{display:inline-block;background:var(--ink);color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:6px;letter-spacing:1px;}
+.status-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:6px;}
+.status-confirmed{background:#f0fff4;color:var(--green);}
+.status-cancelled{background:#fff0f0;color:var(--red);}
+.status-no_show{background:#fff8f0;color:var(--orange);}
+.tier-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+.tier-silver{background:#9ab;}
+.tier-gold{background:var(--yellow2);}
+.tier-black{background:var(--ink);}
+.tier-blackgold{background:var(--yellow2);box-shadow:0 0 5px rgba(224,180,0,0.5);}
+
+/* DATE PICKER */
+.date-nav{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.date-nav button{padding:8px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all 0.2s;}
+.date-nav button:hover{border-color:var(--ink);}
+.date-nav .cur-date{font-size:16px;font-weight:800;letter-spacing:-0.5px;color:var(--ink);}
+
+/* SLOT CARDS */
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px;}
+.slot-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:18px;}
+.slot-card.open{border-color:var(--green);}
+.slot-card.full{border-color:var(--red);opacity:0.7;}
+.slot-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.slot-time{font-size:15px;font-weight:800;letter-spacing:-0.3px;color:var(--ink);}
+.slot-date{font-size:11px;color:var(--ink4);font-weight:600;margin-top:2px;}
+.slot-quota{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.slot-quota.ok{background:#f0fff4;color:var(--green);}
+.slot-quota.low{background:#fff8f0;color:var(--orange);}
+.slot-quota.full{background:#fff0f0;color:var(--red);}
+.slot-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:10px;}
+.slot-bar-fill{height:100%;background:var(--green);border-radius:2px;transition:width 0.5s;}
+.slot-bar-fill.low{background:var(--orange);}
+.slot-bar-fill.full{background:var(--red);}
+
+/* TOPPING PILLS */
+.topping-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.topping-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:100px;font-size:12px;font-weight:600;color:var(--ink);}
+.topping-pill button{background:none;border:none;color:var(--ink4);font-size:14px;cursor:pointer;line-height:1;padding:0;transition:color 0.2s;}
+.topping-pill button:hover{color:var(--red);}
+
+/* MEMBER SEARCH */
+.search-bar{position:relative;margin-bottom:16px;}
+.search-bar input{width:100%;padding:11px 14px 11px 38px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);font-size:13px;font-weight:500;color:var(--ink);outline:none;font-family:'Montserrat',sans-serif;transition:border-color 0.2s;}
+.search-bar input:focus{border-color:var(--yellow2);}
+.search-bar input::placeholder{color:var(--ink4);}
+.search-bar .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:var(--ink4);font-size:12px;font-weight:600;letter-spacing:1px;}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-label{font-size:13px;font-weight:600;color:var(--ink);}
+.toggle-sub{font-size:11px;color:var(--ink4);margin-top:2px;}
+
+/* GRID 2COL */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* NO DATA */
+.no-data{text-align:center;padding:40px;color:var(--ink4);}
+.no-data .icon{font-size:32px;margin-bottom:12px;}
+.no-data .text{font-size:13px;font-weight:600;}
+
+/* FLAVOR TAGS */
+.flavor-tag{display:inline-block;background:var(--yellow);color:var(--ink);font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin:2px;}
+.topping-tag{display:inline-block;background:var(--surface);color:var(--ink3);font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;margin:2px;}
+
+@media(max-width:900px){
+  .sidebar{width:60px;}
+  .sb-item span,.sb-logo-tag,.sb-logo-name,.sb-item .label,.sb-logout{display:none;}
+  .main{margin-left:60px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .grid2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">WEEEE</div>
+    <div class="login-tag">Admin Dashboard</div>
+    <div class="login-title">Admin<br><span>Login</span></div>
+    <div class="login-sub">Authorised personnel only · 仅限授权人员</div>
+    <div class="field">
+      <label class="field-label">Admin Password</label>
+      <input class="field-input" type="password" id="adminPwInput" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-yellow btn-full" onclick="doLogin()">Enter Dashboard</button>
+    <div id="loginMsg" class="msg"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">WEEEE</div>
+      <div class="sb-logo-tag">Admin Panel</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-item active" onclick="showPage('dashboard')">
+        <span class="icon">📊</span><span class="label">Dashboard</span>
+      </div>
+      <div class="sb-item" onclick="showPage('reservations')">
+        <span class="icon">📅</span><span class="label">Reservations</span>
+      </div>
+      <div class="sb-item" onclick="showPage('slots')">
+        <span class="icon">⏰</span><span class="label">Manage Slots</span>
+      </div>
+      <div class="sb-item" onclick="showPage('toppings')">
+        <span class="icon">🍡</span><span class="label">Toppings</span>
+      </div>
+      <div class="sb-item" onclick="showPage('members')">
+        <span class="icon">👥</span><span class="label">Members</span>
+      </div>
+    </div>
+    <div class="sb-bottom">
+      <button class="sb-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-tag">Overview</div>
+        <div class="page-title">Dash<span>board</span></div>
+      </div>
+      <div class="stats-row" id="dashStats">
+        <div class="stat-box yellow"><div class="stat-n" id="dToday">—</div><div class="stat-l">Today's Reservations</div></div>
+        <div class="stat-box"><div class="stat-n" id="dTotal">—</div><div class="stat-l">Total Reservations</div></div>
+        <div class="stat-box"><div class="stat-n" id="dMembers">—</div><div class="stat-l">Total Members</div></div>
+        <div class="stat-box"><div class="stat-n" id="dSlots">—</div><div class="stat-l">Open Slots</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Today's Bookings · 今日预订</div>
+          <div id="todayList"><div class="loading">Loading...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Upcoming Slots · 即将开放</div>
+          <div id="upcomingSlots"><div class="loading">Loading...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESERVATIONS -->
+    <div class="page" id="page-reservations">
+      <div class="page-header">
+        <div class="page-tag">Bookings</div>
+        <div class="page-title">Reser<span>vations</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span>Filter by Date</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="field" style="margin:0;flex:1;min-width:160px;">
+            <label class="field-label">Date</label>
+            <input class="field-input" type="date" id="resDate">
+          </div>
+          <button class="btn btn-yellow" onclick="loadReservations()">Load</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span id="resTitle">Reservations</span>
+          <span id="resCount" style="font-size:11px;background:var(--ink);color:#fff;padding:3px 10px;border-radius:6px;"></span>
+        </div>
+        <div class="table-wrap">
+          <div id="resList"><div class="no-data"><div class="icon">📅</div><div class="text">Select a date to view reservations</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLOTS -->
+    <div class="page" id="page-slots">
+      <div class="page-header">
+        <div class="page-tag">Schedule</div>
+        <div class="page-title">Manage <span>Slots</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Add New Slot · 开放新时段</div>
+          <div class="field">
+            <label class="field-label">Date · 日期</label>
+            <input class="field-input" type="date" id="slotDate">
+          </div>
+          <div class="field">
+            <label class="field-label">Time Label · 时段</label>
+            <input class="field-input" type="text" id="slotTime" placeholder="e.g. 2pm - 4pm">
+          </div>
+          <div class="field">
+            <label class="field-label">Total Quota · 总名额</label>
+            <input class="field-input" type="number" id="slotQuota" placeholder="50" min="1" max="999">
+          </div>
+          <button class="btn btn-yellow btn-full" onclick="addSlot()" style="margin-top:4px;">Open Slot →</button>
+          <div id="slotMsg" class="msg"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Quick Templates · 快速模板</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-outline btn-full" onclick="fillTemplate('2pm - 4pm',50)">🕑 2pm – 4pm · 50 portions</button>
+            <button class="btn btn-outline btn-full" onclick="fillTemplate('4pm - 6pm',50)">🕓 4pm – 6pm · 50 portions</button>
+            <button class="btn btn-outline btn-full" onclick="fillTemplate('11am - 1pm',30)">🕚 11am – 1pm · 30 portions</button>
+            <button class="btn btn-outline btn-full" onclick="fillTemplate('12pm - 2pm',40)">🕛 12pm – 2pm · 40 portions</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span>Upcoming Open Slots · 已开放时段</span>
+          <button class="btn btn-sm" onclick="loadSlots()">↻ Refresh</button>
+        </div>
+        <div id="slotsList"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- TOPPINGS -->
+    <div class="page" id="page-toppings">
+      <div class="page-header">
+        <div class="page-tag">Menu</div>
+        <div class="page-title">Manage <span>Toppings</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Add Topping · 添加配料</div>
+          <div class="field">
+            <label class="field-label">Topping Name</label>
+            <input class="field-input" type="text" id="toppingName" placeholder="e.g. Grass Jelly / 仙草">
+          </div>
+          <button class="btn btn-yellow btn-full" onclick="addTopping()">Add Topping →</button>
+          <div id="toppingMsg" class="msg"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Quick Add · 快速添加</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Grass Jelly 仙草')">Grass Jelly</button>
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Red Bean 红豆')">Red Bean</button>
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Mochi 麻薯')">Mochi</button>
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Aloe Vera 芦荟')">Aloe Vera</button>
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Coconut Jelly 椰果')">Coconut Jelly</button>
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Sago 西米')">Sago</button>
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Corn Flakes 玉米片')">Corn Flakes</button>
+            <button class="btn btn-outline btn-sm" onclick="quickTopping('Fresh Fruit 新鲜水果')">Fresh Fruit</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Current Toppings · 现有配料</div>
+        <div id="toppingsList"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="page" id="page-members">
+      <div class="page-header">
+        <div class="page-tag">Users</div>
+        <div class="page-title">Mem<span>bers</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span>All Members · 所有会员</span>
+          <span id="memberCount" style="font-size:11px;background:var(--ink);color:#fff;padding:3px 10px;border-radius:6px;"></span>
+        </div>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search name or phone..." oninput="filterMembers(this.value)" id="memberSearch">
+        </div>
+        <div class="table-wrap">
+          <div id="membersList"><div class="loading">Loading...</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+const API = 'https://7sc55k-4000.csb.app';
+let TOKEN = '';
+let ALL_MEMBERS = [];
+let ALL_RESERVATIONS = [];
+
+// ══ AUTH ══════════════════════════════════════
+function doLogin() {
+  const pw = document.getElementById('adminPwInput').value;
+  if (!pw) return showLoginMsg('Please enter password', 'error');
+
+  fetch(API + '/admin/login', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ password: pw })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      TOKEN = data.token;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      initApp();
+    } else {
+      showLoginMsg('Wrong password', 'error');
+    }
+  })
+  .catch(() => showLoginMsg('Cannot connect to server. Make sure backend is running.', 'error'));
+}
+
+function doLogout() {
+  TOKEN = '';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('adminPwInput').value = '';
+}
+
+function showLoginMsg(text, type) {
+  const el = document.getElementById('loginMsg');
+  el.textContent = text;
+  el.className = 'msg ' + type + ' show';
+}
+
+// ══ NAVIGATION ════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'reservations') {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('resDate').value = today;
+    loadReservations();
+  }
+  if (name === 'slots') loadSlots();
+  if (name === 'toppings') loadToppings();
+  if (name === 'members') loadMembers();
+}
+
+// ══ INIT ══════════════════════════════════════
+function initApp() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('resDate').value = today;
+  document.getElementById('slotDate').value = today;
+  loadDashboard();
+}
+
+// ══ DASHBOARD ═════════════════════════════════
+async function loadDashboard() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+
+    // Load today's reservations
+    const resRes = await fetch(`${API}/admin/reservations?date=${today}&token=${TOKEN}`);
+    const todayRes = await resRes.json();
+
+    // Load all slots
+    const slotsRes = await fetch(`${API}/slots`);
+    const slots = await slotsRes.json();
+
+    // Load members
+    const membersRes = await fetch(`${API}/admin/members?token=${TOKEN}`);
+    const members = await membersRes.json();
+
+    // Total reservations (rough count from today)
+    document.getElementById('dToday').textContent = Array.isArray(todayRes) ? todayRes.length : 0;
+    document.getElementById('dTotal').textContent = Array.isArray(members) ? members.reduce((a,m) => a + (m.visits||0), 0) : '—';
+    document.getElementById('dMembers').textContent = Array.isArray(members) ? members.length : '—';
+    document.getElementById('dSlots').textContent = Array.isArray(slots) ? slots.length : 0;
+
+    // Today's list
+    const todayEl = document.getElementById('todayList');
+    if (!Array.isArray(todayRes) || todayRes.length === 0) {
+      todayEl.innerHTML = '<div class="no-data"><div class="icon">📭</div><div class="text">No reservations today</div></div>';
+    } else {
+      todayEl.innerHTML = '<table><thead><tr><th>Ticket</th><th>Name</th><th>Time</th><th>Flavor</th></tr></thead><tbody>' +
+        todayRes.map(r => `
+          <tr>
+            <td><span class="ticket-badge">${r.ticket_number}</span></td>
+            <td>${r.members?.name || '—'}</td>
+            <td>${r.slots?.time_label || '—'}</td>
+            <td>${(r.flavors||[]).map(f=>`<span class="flavor-tag">${f}</span>`).join('')}</td>
+          </tr>`).join('') + '</tbody></table>';
+    }
+
+    // Upcoming slots
+    const upEl = document.getElementById('upcomingSlots');
+    if (!Array.isArray(slots) || slots.length === 0) {
+      upEl.innerHTML = '<div class="no-data"><div class="icon">📭</div><div class="text">No open slots</div></div>';
+    } else {
+      upEl.innerHTML = slots.slice(0,5).map(s => {
+        const rem = s.total_quota - s.reserved_quota;
+        const pct = Math.round((s.reserved_quota / s.total_quota) * 100);
+        const cls = pct >= 100 ? 'full' : pct >= 70 ? 'low' : 'ok';
+        const d = new Date(s.slot_date + 'T00:00:00');
+        const dateStr = d.toLocaleDateString('en-MY', {weekday:'short', month:'short', day:'numeric'});
+        return `<div style="padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:13px;font-weight:700;">${dateStr} · ${s.time_label}</div>
+              <div style="font-size:11px;color:var(--ink4);margin-top:2px;">${s.reserved_quota}/${s.total_quota} reserved</div>
+            </div>
+            <span class="slot-quota ${cls}">${rem} left</span>
+          </div>
+          <div class="slot-bar" style="margin-top:8px;"><div class="slot-bar-fill ${cls}" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    document.getElementById('todayList').innerHTML = '<div class="no-data"><div class="icon">⚠️</div><div class="text">Failed to load. Backend may be sleeping — refresh in 10 seconds.</div></div>';
+  }
+}
+
+// ══ RESERVATIONS ══════════════════════════════
+async function loadReservations() {
+  const date = document.getElementById('resDate').value;
+  if (!date) return;
+
+  document.getElementById('resList').innerHTML = '<div class="loading">Loading...</div>';
+  document.getElementById('resTitle').textContent = 'Reservations on ' + date;
+
+  try {
+    const res = await fetch(`${API}/admin/reservations?date=${date}&token=${TOKEN}`);
+    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      document.getElementById('resCount').textContent = '0';
+      document.getElementById('resList').innerHTML = '<div class="no-data"><div class="icon">📭</div><div class="text">No reservations on this date</div></div>';
+      return;
+    }
+
+    document.getElementById('resCount').textContent = data.length + ' bookings';
+    document.getElementById('resList').innerHTML = '<table><thead><tr><th>Ticket</th><th>Name</th><th>Phone</th><th>Time</th><th>Flavor</th><th>Topping</th><th>Status</th></tr></thead><tbody>' +
+      data.map(r => `<tr>
+        <td><span class="ticket-badge">${r.ticket_number}</span></td>
+        <td style="font-weight:700;">${r.members?.name || '—'}</td>
+        <td style="color:var(--ink3);">${r.members?.phone || '—'}</td>
+        <td>${r.slots?.time_label || '—'}</td>
+        <td>${(r.flavors||[]).map(f=>`<span class="flavor-tag">${f}</span>`).join('') || '—'}</td>
+        <td>${(r.toppings||[]).map(t=>`<span class="topping-tag">${t}</span>`).join('') || '<span style="color:var(--ink4);font-size:11px;">None</span>'}</td>
+        <td><span class="status-badge status-${r.status}">${r.status}</span></td>
+      </tr>`).join('') + '</tbody></table>';
+  } catch(e) {
+    document.getElementById('resList').innerHTML = '<div class="no-data"><div class="icon">⚠️</div><div class="text">Failed to load reservations</div></div>';
+  }
+}
+
+// ══ SLOTS ═════════════════════════════════════
+function fillTemplate(time, quota) {
+  document.getElementById('slotTime').value = time;
+  document.getElementById('slotQuota').value = quota;
+}
+
+async function addSlot() {
+  const slot_date = document.getElementById('slotDate').value;
+  const time_label = document.getElementById('slotTime').value.trim();
+  const total_quota = parseInt(document.getElementById('slotQuota').value);
+
+  if (!slot_date) return showMsg('slotMsg', 'Please select a date', 'error');
+  if (!time_label) return showMsg('slotMsg', 'Please enter time label', 'error');
+  if (!total_quota || total_quota < 1) return showMsg('slotMsg', 'Please enter valid quota', 'error');
+
+  try {
+    const res = await fetch(`${API}/admin/slots`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: TOKEN, slot_date, time_label, total_quota })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    showMsg('slotMsg', `✓ Slot opened: ${slot_date} ${time_label} (${total_quota} portions)`, 'success');
+    document.getElementById('slotTime').value = '';
+    document.getElementById('slotQuota').value = '';
+    loadSlots();
+  } catch(e) {
+    showMsg('slotMsg', e.message || 'Failed to add slot', 'error');
+  }
+}
+
+async function loadSlots() {
+  document.getElementById('slotsList').innerHTML = '<div class="loading">Loading...</div>';
+  try {
+    const res = await fetch(`${API}/slots`);
+    const slots = await res.json();
+
+    if (!Array.isArray(slots) || slots.length === 0) {
+      document.getElementById('slotsList').innerHTML = '<div class="no-data"><div class="icon">📭</div><div class="text">No open slots. Add one above.</div></div>';
+      return;
+    }
+
+    document.getElementById('slotsList').innerHTML = '<div class="slot-grid">' + slots.map(s => {
+      const rem = s.total_quota - s.reserved_quota;
+      const pct = Math.round((s.reserved_quota / s.total_quota) * 100);
+      const cls = pct >= 100 ? 'full' : pct >= 70 ? 'low' : 'ok';
+      const d = new Date(s.slot_date + 'T00:00:00');
+      const dateStr = d.toLocaleDateString('en-MY', {weekday:'short', year:'numeric', month:'short', day:'numeric'});
+      return `<div class="slot-card ${pct>=100?'full':'open'}">
+        <div class="slot-header">
+          <div>
+            <div class="slot-time">${s.time_label}</div>
+            <div class="slot-date">${dateStr}</div>
+          </div>
+          <span class="slot-quota ${cls}">${rem} left</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink4);font-weight:600;">${s.reserved_quota} / ${s.total_quota} reserved</div>
+        <div class="slot-bar"><div class="slot-bar-fill ${cls}" style="width:${pct}%"></div></div>
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="btn btn-sm" style="flex:1;" onclick="viewSlotRes('${s.slot_date}')">View List</button>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  } catch(e) {
+    document.getElementById('slotsList').innerHTML = '<div class="no-data"><div class="icon">⚠️</div><div class="text">Failed to load slots</div></div>';
+  }
+}
+
+function viewSlotRes(date) {
+  showPage('reservations');
+  document.getElementById('resDate').value = date;
+  loadReservations();
+  // Switch to reservations tab
+  document.querySelectorAll('.sb-item').forEach((item,i) => {
+    item.classList.remove('active');
+    if (i === 1) item.classList.add('active');
+  });
+}
+
+// ══ TOPPINGS ══════════════════════════════════
+async function addTopping() {
+  const name = document.getElementById('toppingName').value.trim();
+  if (!name) return showMsg('toppingMsg', 'Please enter topping name', 'error');
+
+  try {
+    const res = await fetch(`${API}/admin/toppings`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: TOKEN, name })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    showMsg('toppingMsg', '✓ Topping added: ' + name, 'success');
+    document.getElementById('toppingName').value = '';
+    loadToppings();
+  } catch(e) {
+    showMsg('toppingMsg', e.message || 'Failed', 'error');
+  }
+}
+
+async function quickTopping(name) {
+  try {
+    await fetch(`${API}/admin/toppings`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: TOKEN, name })
+    });
+    loadToppings();
+    showMsg('toppingMsg', '✓ Added: ' + name, 'success');
+  } catch(e) {}
+}
+
+async function loadToppings() {
+  document.getElementById('toppingsList').innerHTML = '<div class="loading">Loading...</div>';
+  try {
+    const res = await fetch(`${API}/toppings`);
+    const toppings = await res.json();
+
+    if (!Array.isArray(toppings) || toppings.length === 0) {
+      document.getElementById('toppingsList').innerHTML = '<div class="no-data"><div class="icon">🍡</div><div class="text">No toppings yet. Add some above!</div></div>';
+      return;
+    }
+
+    document.getElementById('toppingsList').innerHTML = '<div class="topping-list">' +
+      toppings.map(t => `<div class="topping-pill">
+        ${t.name}
+        <button onclick="deleteTopping('${t.id}')" title="Remove">×</button>
+      </div>`).join('') + '</div>' +
+      `<div style="font-size:11px;color:var(--ink4);font-weight:500;">${toppings.length} toppings available</div>`;
+  } catch(e) {
+    document.getElementById('toppingsList').innerHTML = '<div class="no-data"><div class="icon">⚠️</div><div class="text">Failed to load</div></div>';
+  }
+}
+
+async function deleteTopping(id) {
+  if (!confirm('Remove this topping?')) return;
+  try {
+    await fetch(`${API}/admin/toppings/${id}`, {
+      method: 'DELETE',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: TOKEN })
+    });
+    loadToppings();
+  } catch(e) {}
+}
+
+// ══ MEMBERS ═══════════════════════════════════
+async function loadMembers() {
+  document.getElementById('membersList').innerHTML = '<div class="loading">Loading...</div>';
+  try {
+    const res = await fetch(`${API}/admin/members?token=${TOKEN}`);
+    ALL_MEMBERS = await res.json();
+    renderMembers(ALL_MEMBERS);
+  } catch(e) {
+    document.getElementById('membersList').innerHTML = '<div class="no-data"><div class="icon">⚠️</div><div class="text">Failed to load members</div></div>';
+  }
+}
+
+function renderMembers(members) {
+  document.getElementById('memberCount').textContent = members.length + ' members';
+  if (!members.length) {
+    document.getElementById('membersList').innerHTML = '<div class="no-data"><div class="icon">👥</div><div class="text">No members yet</div></div>';
+    return;
+  }
+
+  document.getElementById('membersList').innerHTML = '<table><thead><tr><th>Name</th><th>Phone</th><th>Tier</th><th>Points</th><th>Stamps</th><th>Visits</th><th>Joined</th><th>Action</th></tr></thead><tbody>' +
+    members.map(m => {
+      const tier = m.tier || 'silver';
+      const tierLabel = {silver:'Silver',gold:'Gold',black:'Black',blackgold:'Black Gold'}[tier] || tier;
+      return `<tr>
+        <td style="font-weight:700;">${m.name}</td>
+        <td style="color:var(--ink3);">${m.phone}</td>
+        <td><span class="tier-dot tier-${tier}"></span>${tierLabel}</td>
+        <td style="font-weight:800;">${(m.points||0).toLocaleString()}</td>
+        <td>${m.stamps||0}/10</td>
+        <td>${m.visits||0}</td>
+        <td style="color:var(--ink4);">${m.join_year||'—'}</td>
+        <td>
+          ${m.is_banned ?
+            `<button class="btn btn-sm btn-outline" onclick="unbanMember('${m.id}','${m.name}')">Unban</button>` :
+            `<button class="btn btn-sm btn-red" onclick="banMember('${m.id}','${m.name}')">Ban</button>`
+          }
+        </td>
+      </tr>`;
+    }).join('') + '</tbody></table>';
+}
+
+function filterMembers(q) {
+  if (!q) { renderMembers(ALL_MEMBERS); return; }
+  const filtered = ALL_MEMBERS.filter(m =>
+    (m.name||'').toLowerCase().includes(q.toLowerCase()) ||
+    (m.phone||'').includes(q)
+  );
+  renderMembers(filtered);
+}
+
+async function banMember(id, name) {
+  if (!confirm(`Ban ${name}? They will lose reservation privileges.`)) return;
+  try {
+    await fetch(`${API}/admin/ban`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: TOKEN, member_id: id })
+    });
+    loadMembers();
+  } catch(e) { alert('Failed to ban member'); }
+}
+
+async function unbanMember(id, name) {
+  if (!confirm(`Unban ${name}?`)) return;
+  try {
+    await fetch(`${API}/admin/unban`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: TOKEN, member_id: id })
+    });
+    loadMembers();
+  } catch(e) { alert('Failed to unban member'); }
+}
+
+// ══ UTILS ═════════════════════════════════════
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type + ' show';
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// Enter key on login
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+    doLogin();
+  }
+});
+</script>
+</body>
+</html>
