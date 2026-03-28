@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEEEE — Reserve Bingsu</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset ── */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Body ── */
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #F5F4F2;
+    color: #242424;
+    min-height: 100vh;
+  }
+
+  /* ── Navigation Bar ── */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 32px;
+    background: #F5F4F2;
+    border-bottom: 1px solid #e8e8e4;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: #242424;
+    text-decoration: none;
+  }
+  .nav-back {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #242424;
+    text-decoration: none;
+    text-transform: uppercase;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  .nav-back:hover { opacity: 1; }
+
+  /* ── Page Container ── */
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+
+  /* ── Hero Section ── */
+  .hero { margin-bottom: 36px; }
+  .hero-tag {
+    display: inline-block;
+    background: #FFCE00;
+    color: #242424;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: #242424;
+    text-transform: uppercase;
+  }
+  .hero h1 span { color: #FFCE00; }
+  .hero p {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+    border: 1px solid #eeecea;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #242424;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #f0f0ee;
+  }
+
+  /* ── Form Elements ── */
+  .form-group { margin-bottom: 16px; }
+  label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #e8e8e4;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    outline: none;
+    background: #F5F4F2;
+    color: #242424;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  input:focus { border-color: #FFCE00; background: #fff; }
+  input::placeholder { color: #bbb; font-weight: 400; }
+  .hint { font-size: 11px; color: #aaa; margin-top: 5px; font-weight: 500; }
+
+  /* ── Buttons ── */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    background: #242424;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s, transform 0.1s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn:hover { background: #111; transform: translateY(-1px); }
+  .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+  .btn-yellow { background: #FFCE00; color: #242424; }
+  .btn-yellow:hover { background: #f0c000; }
+  .btn-outline {
+    background: transparent;
+    color: #242424;
+    border: 1.5px solid #e0e0dc;
+  }
+  .btn-outline:hover { background: #f5f4f2; border-color: #242424; }
+
+  /* ── Alert Messages ── */
+  .msg {
+    font-size: 12px;
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .msg.error { background: #fff0f0; color: #c0392b; border-left: 3px solid #c0392b; }
+  .msg.success { background: #f0fff4; color: #27ae60; border-left: 3px solid #27ae60; }
+  .msg.info { background: #fffbea; color: #b8860b; border-left: 3px solid #FFCE00; }
+
+  /* ── Logged-in Member Bar ── */
+  .member-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #242424;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .member-bar .name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .member-bar .name span { color: #FFCE00; }
+  .logout-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { border-color: #fff; color: #fff; }
+
+  /* ── Slot Cards ── */
+  .slot-card {
+    border: 1.5px solid #e8e8e4;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .slot-card:hover { border-color: #242424; background: #fafaf8; }
+  .slot-card.selected { border-color: #FFCE00; background: #fffdf0; }
+  .slot-card .date { font-weight: 700; font-size: 14px; }
+  .slot-card .time { color: #888; font-size: 12px; margin-top: 3px; font-weight: 600; }
+  .slot-card .quota {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #f0fff4;
+    color: #27ae60;
+  }
+  .slot-card .quota.low { background: #fff8f0; color: #e67e22; }
+  .slot-card .quota.full { background: #fff0f0; color: #e74c3c; }
+
+  /* ── Flavor Selector ── */
+  .flavor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .flavor-btn {
+    padding: 20px 12px;
+    border: 1.5px solid #e8e8e4;
+    border-radius: 10px;
+    background: #F5F4F2;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .flavor-btn:hover { border-color: #242424; }
+  .flavor-btn.selected { border-color: #FFCE00; background: #fffdf0; }
+  .flavor-btn .emoji { font-size: 24px; display: block; margin-bottom: 6px; }
+
+  /* ── Topping Selector ── */
+  .topping-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .topping-btn {
+    padding: 10px 8px;
+    border: 1.5px solid #e8e8e4;
+    border-radius: 8px;
+    background: #F5F4F2;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .topping-btn:hover { border-color: #242424; }
+  .topping-btn.selected { border-color: #FFCE00; background: #fffdf0; }
+
+  /* ── Order Summary ── */
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f4f2;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .s-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+  .summary-row .s-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #242424;
+    text-align: right;
+    max-width: 60%;
+  }
+
+  /* ── Success Ticket ── */
+  .ticket { text-align: center; padding: 20px 0; }
+  .ticket-badge {
+    display: inline-block;
+    background: #FFCE00;
+    color: #242424;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .ticket-number {
+    font-size: 80px;
+    font-weight: 900;
+    color: #242424;
+    line-height: 1;
+    letter-spacing: -4px;
+  }
+  .ticket-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-top: 8px;
+  }
+  .ticket-detail { margin-top: 20px; font-size: 13px; font-weight: 600; color: #555; line-height: 2; }
+  .ticket-note { margin-top: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: #aaa; line-height: 1.8; }
+
+  /* ── Misc ── */
+  .countdown { font-size: 11px; color: #e67e22; margin-top: 6px; font-weight: 600; }
+  .no-slots { text-align: center; padding: 32px 16px; color: #aaa; font-size: 13px; font-weight: 600; line-height: 2; }
+  .divider { height: 1px; background: #f0f0ee; margin: 16px 0; }
+
+  /* ── Section show/hide ── */
+  .section { display: none; }
+  .section.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══ Navigation Bar ═══ -->
+<nav class="nav">
+  <a href="https://weeeebywelemon.com" class="nav-logo">WEEEE</a>
+  <a href="https://weeeebywelemon.com" class="nav-back">← Back to Menu</a>
+</nav>
+
+<div class="container">
+
+  <!-- ═══ AUTH SECTION (Login / Register) ═══ -->
+  <div id="sec-auth" class="section active">
+
+    <div class="hero">
+      <div class="hero-tag">🍧 Reservation</div>
+      <h1>Reserve your<br><span>bingsu</span></h1>
+      <p>Login or register to reserve your bingsu in advance · 登入或注册预订雪花冰</p>
+    </div>
+
+    <!-- Step 1: Phone + Name input -->
+    <div id="step-phone" class="card">
+      <div class="card-title">Member Login / Register</div>
+
+      <div class="form-group">
+        <label>WhatsApp Number · 号码</label>
+        <input type="tel" id="inp-phone" placeholder="+60123456789" />
+        <div class="hint">Include country code · 请填写国码</div>
+      </div>
+
+      <div class="form-group" id="name-group">
+        <label>Your Name · 你的名字</label>
+        <input type="text" id="inp-name" placeholder="Ahmad / Wei Ming" />
+        <div class="hint">Required for new members · 首次注册需填写</div>
+      </div>
+
+      <button class="btn btn-yellow" id="btn-send-otp">Send OTP · 发送验证码</button>
+      <div id="msg-phone" class="msg" style="display:none"></div>
+    </div>
+
+    <!-- Step 2: OTP input -->
+    <div id="step-otp" class="card" style="display:none">
+      <div class="card-title">Enter OTP · 输入验证码</div>
+      <p style="font-size:12px;color:#888;font-weight:600;margin-bottom:18px">
+        OTP sent to your WhatsApp · 验证码已发到你的 WhatsApp
+      </p>
+
+      <div class="form-group">
+        <label>6-Digit OTP · 6位验证码</label>
+        <input type="number" id="inp-otp" placeholder="123456" />
+      </div>
+
+      <div id="countdown" class="countdown"></div>
+      <button class="btn" id="btn-verify-otp">Verify · 验证</button>
+      <button class="btn btn-outline" id="btn-resend" style="margin-top:8px;display:none">
+        Resend OTP · 重发
+      </button>
+      <div id="msg-otp" class="msg" style="display:none"></div>
+    </div>
+
+  </div><!-- /sec-auth -->
+
+
+  <!-- ═══ BOOKING SECTION ═══ -->
+  <div id="sec-booking" class="section" style="display:none">
+
+    <div class="hero" style="margin-bottom:20px">
+      <div class="hero-tag">🍧 Reservation</div>
+      <h1>Book your<br><span>bingsu</span></h1>
+    </div>
+
+    <!-- Logged-in member bar -->
+    <div class="member-bar">
+      <div class="name">Welcome, <span id="member-name-display">—</span></div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Step 1: Choose date & time slot -->
+    <div id="step-slots" class="card">
+      <div class="card-title">① Date &amp; Time Slot</div>
+      <div id="slots-list"><div class="no-slots">Loading...</div></div>
+      <button class="btn" id="btn-next-slot" disabled style="margin-top:16px">Next →</button>
+    </div>
+
+    <!-- Step 2: Choose flavors & toppings -->
+    <div id="step-flavor" class="card" style="display:none">
+      <div class="card-title">② Flavor &amp; Topping</div>
+
+      <p style="font-size:11px;font-weight:700;letter-spacing:1px;color:#888;margin-bottom:14px;text-transform:uppercase">
+        Select up to 2 flavors · 最多2种
+      </p>
+
+      <div class="flavor-grid">
+        <button class="flavor-btn" onclick="toggleFlavor('mangosteen','Mangosteen 山竹')" id="fl-mangosteen">
+          <span class="emoji">🍇</span>
+          Mangosteen<br>
+          <span style="font-weight:400;font-size:11px;color:#888">山竹</span>
+        </button>
+        <button class="flavor-btn" onclick="toggleFlavor('lychee','Lychee 荔枝')" id="fl-lychee">
+          <span class="emoji">🍈</span>
+          Lychee<br>
+          <span style="font-weight:400;font-size:11px;color:#888">荔枝</span>
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="font-size:11px;font-weight:700;letter-spacing:1px;color:#888;margin-bottom:12px;text-transform:uppercase">
+        Toppings · Max 3 · 最多3种
+      </p>
+      <div class="topping-grid" id="topping-grid">
+        <div style="font-size:12px;color:#aaa;grid-column:span 2;text-align:center;padding:16px">Loading...</div>
+      </div>
+
+      <div id="msg-flavor" class="msg" style="display:none"></div>
+      <button class="btn btn-outline" onclick="showStep('slots')" style="margin-bottom:8px">← Back</button>
+      <button class="btn btn-yellow" onclick="gotoSummary()">Next →</button>
+    </div>
+
+    <!-- Step 3: Order summary & confirm -->
+    <div id="step-summary" class="card" style="display:none">
+      <div class="card-title">③ Confirm Order</div>
+      <div id="summary-content"></div>
+      <div id="msg-summary" class="msg" style="display:none"></div>
+      <button class="btn btn-outline" onclick="showStep('flavor')" style="margin-bottom:8px;margin-top:16px">← Back</button>
+      <button class="btn" id="btn-confirm" onclick="confirmReservation()">Confirm Reservation</button>
+    </div>
+
+    <!-- Step 4: Success + Ticket -->
+    <div id="step-success" class="card" style="display:none">
+      <div class="ticket">
+        <div class="ticket-badge">✓ Confirmed</div>
+        <div class="ticket-number" id="ticket-num">A-001</div>
+        <div class="ticket-label">Your Ticket Number · 你的号码牌</div>
+        <div class="ticket-detail" id="ticket-detail"></div>
+        <div class="ticket-note">
+          Show this number upon arrival · 到店出示此号码<br>
+          Seats are first-come-first-served · 桌位先到先得
+        </div>
+      </div>
+      <button class="btn btn-yellow" onclick="resetBooking()" style="margin-top:16px">
+        Make Another Reservation
+      </button>
+    </div>
+
+  </div><!-- /sec-booking -->
+
+</div><!-- /container -->
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════
+const API = 'https://7sc55k-4000.csb.app';
+
+// ─── State variables ───────────────────────────────────────────
+let member = null;         // logged-in member object
+let selectedSlot = null;   // chosen time slot
+let selectedFlavors = [];  // chosen flavors (max 2)
+let selectedToppings = []; // chosen toppings (max 3)
+let otpTimer = null;       // countdown timer reference
+
+
+// ═══════════════════════════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+// Show a message box (error / success / info)
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  el.style.display = 'block';
+}
+
+// Hide a message box
+function hideMsg(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+// Show a specific booking step, hide others
+function showStep(step) {
+  const steps = ['step-slots', 'step-flavor', 'step-summary', 'step-success'];
+  steps.forEach(s => {
+    document.getElementById(s).style.display = (s === 'step-' + step) ? 'block' : 'none';
+  });
+}
+
+// Build a summary row HTML
+function row(label, value) {
+  return '<div class="summary-row">' +
+    '<span class="s-label">' + label + '</span>' +
+    '<span class="s-value">' + value + '</span>' +
+    '</div>';
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH — Check existing session
+// ═══════════════════════════════════════════════════════════════
+function checkExistingSession() {
+  try {
+    const saved = localStorage.getItem('bingsu_member');
+    if (saved) {
+      member = JSON.parse(saved);
+      enterBooking();
+    }
+  } catch(e) {}
+}
+
+// Logout — clear session, show login page
+function logout() {
+  localStorage.removeItem('bingsu_member');
+  member = null;
+  document.getElementById('sec-auth').style.display = 'block';
+  document.getElementById('sec-booking').style.display = 'none';
+  document.getElementById('step-phone').style.display = 'block';
+  document.getElementById('step-otp').style.display = 'none';
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-otp').value = '';
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH — Send OTP
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('btn-send-otp').addEventListener('click', async () => {
+  const phone = document.getElementById('inp-phone').value.trim();
+
+  // Validate phone format
+  if (!phone || !phone.startsWith('+')) {
+    return showMsg('msg-phone', 'Please enter a valid number with country code, e.g. +60123456789', 'error');
+  }
+
+  hideMsg('msg-phone');
+  const btn = document.getElementById('btn-send-otp');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    const res = await fetch(API + '/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    // Move to OTP input step
+    document.getElementById('step-phone').style.display = 'none';
+    document.getElementById('step-otp').style.display = 'block';
+    startOtpTimer();
+
+  } catch(e) {
+    showMsg('msg-phone', e.message || 'Failed to send OTP', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send OTP · 发送验证码';
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH — OTP Countdown Timer
+// ═══════════════════════════════════════════════════════════════
+function startOtpTimer() {
+  let secs = 120;
+  const el = document.getElementById('countdown');
+  const resendBtn = document.getElementById('btn-resend');
+  resendBtn.style.display = 'none';
+
+  if (otpTimer) clearInterval(otpTimer);
+
+  otpTimer = setInterval(() => {
+    secs--;
+    el.textContent = 'OTP expires in ' + secs + 's · 验证码将在 ' + secs + ' 秒后失效';
+    if (secs <= 0) {
+      clearInterval(otpTimer);
+      el.textContent = 'OTP expired · 验证码已失效';
+      resendBtn.style.display = 'block';
+    }
+  }, 1000);
+}
+
+// Resend — go back to phone step
+document.getElementById('btn-resend').addEventListener('click', () => {
+  document.getElementById('step-otp').style.display = 'none';
+  document.getElementById('step-phone').style.display = 'block';
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH — Verify OTP
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('btn-verify-otp').addEventListener('click', async () => {
+  const phone = document.getElementById('inp-phone').value.trim();
+  const code  = document.getElementById('inp-otp').value.trim();
+  const name  = document.getElementById('inp-name').value.trim();
+
+  if (!code || code.length !== 6) {
+    return showMsg('msg-otp', 'Please enter the 6-digit OTP', 'error');
+  }
+
+  hideMsg('msg-otp');
+  const btn = document.getElementById('btn-verify-otp');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+
+  try {
+    const res = await fetch(API + '/auth/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, code, name })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    // Save member to localStorage (stays logged in)
+    member = data.member;
+    localStorage.setItem('bingsu_member', JSON.stringify(member));
+    if (otpTimer) clearInterval(otpTimer);
+    enterBooking();
+
+  } catch(e) {
+    showMsg('msg-otp', e.message || 'Verification failed', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Verify · 验证';
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Enter booking page
+// ═══════════════════════════════════════════════════════════════
+function enterBooking() {
+  document.getElementById('sec-auth').style.display = 'none';
+  document.getElementById('sec-booking').style.display = 'block';
+  document.getElementById('member-name-display').textContent = member.name;
+  loadSlots();
+  loadToppings();
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Load available time slots
+// ═══════════════════════════════════════════════════════════════
+async function loadSlots() {
+  const container = document.getElementById('slots-list');
+  container.innerHTML = '<div class="no-slots">Loading...</div>';
+
+  try {
+    const res = await fetch(API + '/slots');
+    const slots = await res.json();
+
+    if (!slots.length) {
+      container.innerHTML = '<div class="no-slots">No slots available at the moment.<br>目前没有开放的预订时段<br><br>Follow us for updates.</div>';
+      return;
+    }
+
+    container.innerHTML = '';
+    slots.forEach(slot => {
+      const remaining = slot.total_quota - slot.reserved_quota;
+      const pct = remaining / slot.total_quota;
+
+      // Determine quota badge style
+      let quotaClass = '', quotaText = '';
+      if (remaining === 0)       { quotaClass = 'full'; quotaText = 'FULL'; }
+      else if (pct <= 0.3)       { quotaClass = 'low';  quotaText = remaining + ' LEFT'; }
+      else                       { quotaText = remaining + ' LEFT'; }
+
+      // Format date
+      const d = new Date(slot.slot_date + 'T00:00:00');
+      const dateStr = d.toLocaleDateString('en-MY', {
+        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+      });
+
+      // Build slot card
+      const card = document.createElement('div');
+      card.className = 'slot-card';
+      card.style.opacity = remaining === 0 ? '0.4' : '1';
+      card.style.cursor  = remaining === 0 ? 'not-allowed' : 'pointer';
+      card.innerHTML =
+        '<div class="slot-left">' +
+          '<div class="date">' + dateStr + '</div>' +
+          '<div class="time">⏰ ' + slot.time_label + '</div>' +
+        '</div>' +
+        '<div class="quota ' + quotaClass + '">' + quotaText + '</div>';
+
+      // Click to select slot
+      if (remaining > 0) {
+        card.onclick = () => {
+          document.querySelectorAll('.slot-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedSlot = slot;
+          document.getElementById('btn-next-slot').disabled = false;
+        };
+      }
+
+      container.appendChild(card);
+    });
+
+  } catch(e) {
+    container.innerHTML = '<div class="no-slots">Failed to load. Please refresh.</div>';
+  }
+}
+
+// Next button from slots step
+document.getElementById('btn-next-slot').addEventListener('click', () => {
+  if (!selectedSlot) return;
+  showStep('flavor');
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Load toppings
+// ═══════════════════════════════════════════════════════════════
+async function loadToppings() {
+  try {
+    const res = await fetch(API + '/toppings');
+    const toppings = await res.json();
+    const grid = document.getElementById('topping-grid');
+    grid.innerHTML = '';
+
+    if (!toppings.length) {
+      grid.innerHTML = '<div style="font-size:12px;color:#aaa;grid-column:span 2;text-align:center;padding:16px">No toppings available</div>';
+      return;
+    }
+
+    toppings.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'topping-btn';
+      btn.id = 'tp-' + t.id;
+      btn.textContent = t.name;
+      btn.onclick = () => toggleTopping(t.id, t.name, btn);
+      grid.appendChild(btn);
+    });
+  } catch(e) {}
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Toggle flavor selection (max 2)
+// ═══════════════════════════════════════════════════════════════
+function toggleFlavor(id, name) {
+  const btn = document.getElementById('fl-' + id);
+  const idx = selectedFlavors.findIndex(f => f.id === id);
+
+  if (idx >= 0) {
+    // Deselect
+    selectedFlavors.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedFlavors.length >= 2) {
+      showMsg('msg-flavor', 'Max 2 flavors · 最多2种口味', 'error');
+      return;
+    }
+    selectedFlavors.push({ id, name });
+    btn.classList.add('selected');
+  }
+  hideMsg('msg-flavor');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Toggle topping selection (max 3)
+// ═══════════════════════════════════════════════════════════════
+function toggleTopping(id, name, btn) {
+  const idx = selectedToppings.findIndex(t => t.id === id);
+
+  if (idx >= 0) {
+    selectedToppings.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedToppings.length >= 3) {
+      showMsg('msg-flavor', 'Max 3 toppings · 最多3种', 'error');
+      return;
+    }
+    selectedToppings.push({ id, name });
+    btn.classList.add('selected');
+  }
+  hideMsg('msg-flavor');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Go to summary page
+// ═══════════════════════════════════════════════════════════════
+function gotoSummary() {
+  if (!selectedFlavors.length) {
+    return showMsg('msg-flavor', 'Please select at least 1 flavor · 请至少选一种口味', 'error');
+  }
+  hideMsg('msg-flavor');
+
+  const d = new Date(selectedSlot.slot_date + 'T00:00:00');
+  const dateStr = d.toLocaleDateString('en-MY', {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+  });
+
+  document.getElementById('summary-content').innerHTML =
+    row('Date',    dateStr) +
+    row('Time',    selectedSlot.time_label) +
+    row('Flavor',  selectedFlavors.map(f => f.name).join(' + ')) +
+    row('Topping', selectedToppings.length ? selectedToppings.map(t => t.name).join(', ') : 'None') +
+    row('Name',    member.name) +
+    row('Phone',   member.phone);
+
+  showStep('summary');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Confirm reservation
+// ═══════════════════════════════════════════════════════════════
+async function confirmReservation() {
+  const btn = document.getElementById('btn-confirm');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+  hideMsg('msg-summary');
+
+  try {
+    const res = await fetch(API + '/reservations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        member_id: member.id,
+        slot_id:   selectedSlot.id,
+        flavors:   selectedFlavors.map(f => f.id),
+        toppings:  selectedToppings.map(t => t.id)
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    // Show ticket
+    const r = data.reservation;
+    document.getElementById('ticket-num').textContent = r.ticket_number;
+
+    const d = new Date(selectedSlot.slot_date + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('en-MY', { month: 'short', day: 'numeric' });
+    document.getElementById('ticket-detail').innerHTML =
+      '📅 ' + dateStr + ' &nbsp;⏰ ' + selectedSlot.time_label + '<br>' +
+      '🍧 ' + selectedFlavors.map(f => f.name).join(' + ') + '<br>' +
+      (selectedToppings.length ? '🍡 ' + selectedToppings.map(t => t.name).join(', ') : '');
+
+    showStep('success');
+
+  } catch(e) {
+    showMsg('msg-summary', e.message || 'Booking failed, please try again', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Confirm Reservation';
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKING — Reset for another booking
+// ═══════════════════════════════════════════════════════════════
+function resetBooking() {
+  selectedSlot = null;
+  selectedFlavors = [];
+  selectedToppings = [];
+  document.querySelectorAll('.slot-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.flavor-btn, .topping-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn-next-slot').disabled = true;
+  loadSlots();
+  showStep('slots');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// INIT — Check if already logged in
+// ═══════════════════════════════════════════════════════════════
+checkExistingSession();
+</script>
+</body>
+</html>
