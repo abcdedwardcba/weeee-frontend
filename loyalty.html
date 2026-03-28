@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F5F4F2">
+<title>WEEEE — Loyalty</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   WEEEE LOYALTY — Design System
+   Matches weeeebywelemon.com
+   Background: #F5F4F2 | Accent: #FFCE00
+   Text: #242424 | Font: Montserrat
+══════════════════════════════════════════ */
+:root {
+  --bg:      #F5F4F2;
+  --white:   #ffffff;
+  --ink:     #242424;
+  --ink2:    #3a3a3a;
+  --ink3:    #6b6b6b;
+  --ink4:    #9a9a9a;
+  --yellow:  #FFCE00;
+  --yellow2: #E0B400;
+  --border:  #e8e8e4;
+  --border2: #d0d0cc;
+  --surface: #efefec;
+  --r:       10px;
+  --r2:      14px;
+  --r3:      20px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; cursor: pointer; }
+input  { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ── LOADING ── */
+#loadScreen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  transition: opacity 0.7s ease;
+}
+#loadScreen.out { opacity: 0; pointer-events: none; }
+.ls-logo {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--ink);
+  animation: fadeUp 0.8s ease both;
+}
+.ls-tag {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  margin-top: 8px;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+.ls-bar {
+  width: 32px; height: 1px;
+  background: var(--border);
+  margin-top: 40px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+.ls-bar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--ink);
+  transform: translateX(-100%);
+  animation: barFill 1.6s 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes barFill { to { transform: translateX(0); } }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── AUTH SCREEN ── */
+#authWrap {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--bg);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 40px;
+  overflow-y: auto;
+}
+#authWrap.show { display: flex; }
+
+.auth-logo {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.auth-tag {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* Role cards */
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 0;
+}
+.role-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r2);
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.role-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(36,36,36,0.08);
+}
+.role-icon {
+  width: 40px; height: 40px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.role-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+/* Auth panel */
+.auth-panel {
+  width: 100%;
+  max-width: 340px;
+  display: none;
+}
+.auth-panel.show { display: block; }
+.auth-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  background: none; border: none;
+  margin-bottom: 28px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.auth-back:hover { color: var(--ink); }
+.auth-panel-title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+.auth-panel-title span { color: var(--yellow2); }
+.auth-panel-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink4);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+/* ── FORM ── */
+.field { margin-bottom: 14px; }
+.field-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  margin-bottom: 7px;
+}
+.field-input {
+  width: 100%;
+  padding: 13px 15px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field-input::placeholder { color: var(--ink4); font-weight: 400; }
+.field-input:focus { border-color: var(--yellow2); box-shadow: 0 0 0 3px rgba(224,180,0,0.12); }
+
+/* ── BUTTONS ── */
+.btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-radius: var(--r);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: 'Montserrat', sans-serif;
+}
+.btn:hover { background: var(--ink2); transform: translateY(-1px); }
+.btn:disabled { background: var(--border2); cursor: not-allowed; transform: none; }
+.btn-yellow {
+  background: var(--yellow);
+  color: var(--ink);
+}
+.btn-yellow:hover { background: var(--yellow2); }
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--ink); }
+
+/* ── MESSAGES ── */
+.msg { font-size: 11px; font-weight: 600; margin-top: 10px; padding: 11px 13px; border-radius: 8px; letter-spacing: 0.3px; display: none; }
+.msg.error   { background: #fff0f0; color: #c0392b; border-left: 3px solid #c0392b; display: block; }
+.msg.success { background: #f0fff4; color: #27ae60; border-left: 3px solid #27ae60; display: block; }
+.msg.info    { background: #fffbea; color: #b8860b; border-left: 3px solid var(--yellow); display: block; }
+
+.otp-hint {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink4);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.countdown {
+  font-size: 11px;
+  font-weight: 600;
+  color: #e67e22;
+  margin-top: 6px;
+}
+
+/* ══════════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════════ */
+#app {
+  display: none;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--bg);
+}
+#app.show { display: block; }
+
+/* ── TOP BAR ── */
+.top-bar {
+  position: sticky; top: 0; z-index: 200;
+  height: 54px;
+  padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(245,244,242,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.tb-logo {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.tb-logo span { color: var(--yellow2); }
+.tb-right { display: flex; align-items: center; gap: 10px; }
+.admin-tag {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.tb-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink3);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.tb-avatar:hover { border-color: var(--ink); }
+.tb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  height: 68px;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  background: rgba(245,244,242,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 200;
+}
+.nav-btn {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px;
+  background: none; border: none;
+  color: var(--ink4);
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-btn svg { width: 18px; height: 18px; }
+.nav-btn span { font-size: 7px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.nav-btn.active { color: var(--ink); }
+
+/* ── PAGES ── */
+.page { display: none; padding-bottom: 84px; }
+.page.active { display: block; animation: pgIn 0.3s ease; }
+@keyframes pgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════
+   MEMBERSHIP CARD
+══════════════════════════════════════════ */
+.card-outer { padding: 24px 20px 0; }
+.card-scene { perspective: 1400px; height: 210px; }
+.m-card {
+  width: 100%; height: 210px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(2deg) rotateY(-5deg);
+  transition: transform 0.05s linear;
+  cursor: grab;
+  will-change: transform;
+  border-radius: 20px;
+}
+.m-card:active { cursor: grabbing; }
+.m-card-face {
+  position: absolute; inset: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Card tiers */
+.t-silver { background: linear-gradient(145deg,#dde5ea 0%,#f0f4f6 40%,#c8d8e0 80%,#e8f0f4 100%); box-shadow: 0 24px 60px rgba(36,36,36,0.14); }
+.t-gold   { background: linear-gradient(145deg,#e0a800 0%,#ffd740 38%,#c49000 72%,#ffe060 100%); box-shadow: 0 24px 60px rgba(180,130,0,0.28); }
+.t-black  { background: linear-gradient(145deg,#1c1c1c 0%,#2e2e2e 40%,#111 80%,#252525 100%); box-shadow: 0 24px 60px rgba(0,0,0,0.4); }
+.t-blackgold { background: linear-gradient(145deg,#1a1a1a 0%,#282828 35%,#1e1e1e 65%,#141414 100%); box-shadow: 0 24px 72px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,206,0,0.15) inset; }
+
+.card-holo {
+  position: absolute; inset: 0;
+  border-radius: 20px;
+  pointer-events: none;
+  animation: holoShift 6s ease-in-out infinite;
+  background: linear-gradient(108deg, transparent 30%, rgba(255,255,255,0.12) 43%, rgba(255,255,255,0.06) 49%, transparent 62%);
+  background-size: 280% 100%;
+}
+.t-blackgold .card-holo {
+  background: linear-gradient(108deg, transparent 30%, rgba(255,206,0,0.18) 43%, rgba(255,206,0,0.07) 49%, transparent 62%);
+  background-size: 280% 100%;
+}
+@keyframes holoShift { 0%,100% { background-position: -180% 0; } 50% { background-position: 180% 0; } }
+
+.card-geo {
+  position: absolute; right: -20px; top: -20px;
+  width: 140px; height: 140px;
+  border-radius: 50%; pointer-events: none;
+}
+.card-geo::before, .card-geo::after {
+  content: ''; position: absolute; border-radius: 50%; inset: 0; border: 1px solid;
+  transform: scale(1.3);
+}
+.card-geo::after { transform: scale(1.65); }
+.t-silver .card-geo::before, .t-silver .card-geo::after { border-color: rgba(30,60,80,0.07); }
+.t-gold .card-geo::before, .t-gold .card-geo::after { border-color: rgba(80,40,0,0.10); }
+.t-black .card-geo::before, .t-black .card-geo::after { border-color: rgba(255,255,255,0.04); }
+.t-blackgold .card-geo::before, .t-blackgold .card-geo::after { border-color: rgba(255,206,0,0.07); }
+
+.card-accent-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px; border-radius: 0 0 20px 20px;
+}
+.t-blackgold .card-accent-bar { background: linear-gradient(to right, #FFCE00, rgba(255,206,0,0.2), transparent); }
+
+/* Card text */
+.c-logo { position: absolute; top: 22px; left: 24px; }
+.c-logo-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.c-logo-sub { font-size: 7px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; opacity: 0.6; }
+.t-silver .c-logo-name, .t-silver .c-logo-sub { color: rgba(20,50,70,0.85); }
+.t-gold .c-logo-name, .t-gold .c-logo-sub { color: rgba(50,28,0,0.88); }
+.t-black .c-logo-name { color: rgba(255,255,255,0.88); } .t-black .c-logo-sub { color: rgba(255,255,255,0.4); }
+.t-blackgold .c-logo-name { color: rgba(255,255,255,0.92); } .t-blackgold .c-logo-sub { color: rgba(255,206,0,0.6); }
+
+.c-tier { position: absolute; top: 24px; right: 22px; font-size: 8px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+.t-silver .c-tier { color: rgba(30,60,80,0.45); }
+.t-gold .c-tier { color: rgba(60,32,0,0.5); }
+.t-black .c-tier { color: rgba(255,255,255,0.3); }
+.t-blackgold .c-tier { color: rgba(255,206,0,0.5); }
+
+.c-name { position: absolute; bottom: 50px; left: 24px; font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+.t-silver .c-name { color: rgba(20,50,70,0.88); }
+.t-gold .c-name { color: rgba(50,28,0,0.88); }
+.t-black .c-name { color: rgba(255,255,255,0.85); }
+.t-blackgold .c-name { color: rgba(255,255,255,0.9); }
+
+.c-phone { position: absolute; bottom: 30px; left: 24px; font-size: 10px; font-weight: 500; letter-spacing: 1.5px; opacity: 0.4; }
+.t-silver .c-phone { color: rgba(20,50,70,1); }
+.t-gold .c-phone { color: rgba(50,28,0,1); }
+.t-black .c-phone, .t-blackgold .c-phone { color: rgba(255,255,255,1); }
+
+.c-pts-block { position: absolute; bottom: 22px; right: 22px; text-align: right; }
+.c-pts-num { font-size: 36px; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+.c-pts-label { font-size: 7px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; opacity: 0.4; }
+.t-silver .c-pts-num, .t-silver .c-pts-label { color: rgba(20,50,70,0.88); }
+.t-gold .c-pts-num, .t-gold .c-pts-label { color: rgba(50,28,0,0.88); }
+.t-black .c-pts-num, .t-black .c-pts-label { color: rgba(255,255,255,0.9); }
+.t-blackgold .c-pts-num { color: var(--yellow); } .t-blackgold .c-pts-label { color: rgba(255,206,0,0.6); }
+
+/* Tier pills */
+.tier-pills { display: flex; gap: 6px; padding: 16px 20px 0; overflow-x: auto; scrollbar-width: none; }
+.tier-pills::-webkit-scrollbar { display: none; }
+.t-pill {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.t-pill:hover { border-color: var(--ink); color: var(--ink); }
+.t-pill.active { background: var(--ink); border-color: var(--ink); color: var(--white); }
+
+/* ══════════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 16px 20px 0;
+}
+.stat-cell {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r2);
+  padding: 16px 12px 14px;
+}
+.stat-n { font-size: 26px; font-weight: 900; letter-spacing: -1px; color: var(--ink); }
+.stat-l { font-size: 8px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink4); margin-top: 4px; }
+
+.progress-block {
+  margin: 14px 20px 0;
+  background: var(--yellow);
+  border-radius: var(--r2);
+  padding: 16px 18px;
+}
+.pb-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.pb-lbl { font-size: 11px; font-weight: 700; color: var(--ink); }
+.pb-val { font-size: 11px; font-weight: 500; color: rgba(36,36,36,0.55); }
+.prog-track { height: 2px; background: rgba(36,36,36,0.15); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--ink); border-radius: 2px; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
+
+.stamp-block {
+  margin: 14px 20px 0;
+  padding: 18px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r2);
+}
+.sb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+.sb-title { font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: 0.3px; }
+.sb-badge { font-size: 8px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 9px; background: var(--ink); color: var(--white); border-radius: 6px; }
+.sb-sub { font-size: 11px; color: var(--ink4); margin-bottom: 14px; font-weight: 500; }
+.stamp-row { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+.sd { aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--border); background: var(--bg); transition: all 0.3s; }
+.sd.on { background: var(--ink); border-color: var(--ink); }
+.sd.free-slot { border-color: var(--yellow2); border-style: dashed; }
+.sd.on.free-slot { background: var(--yellow); border-color: var(--yellow2); border-style: solid; }
+
+.section-header { padding: 20px 20px 10px; display: flex; align-items: baseline; justify-content: space-between; }
+.sh-title { font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--ink3); }
+
+.tx-list { padding: 0 20px; }
+.tx-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+.tx-row:last-child { border-bottom: none; }
+.tx-icon { width: 32px; height: 32px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+.tx-d { flex: 1; }
+.tx-name { font-size: 12px; font-weight: 500; color: var(--ink); }
+.tx-date { font-size: 10px; color: var(--ink4); margin-top: 2px; }
+.tx-pts { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
+.tx-pts.earn  { color: var(--ink); }
+.tx-pts.spend { color: var(--ink4); }
+
+/* ══════════════════════════════════════════
+   EARN PAGE (Staff)
+══════════════════════════════════════════ */
+.page-hero { padding: 28px 20px 22px; border-bottom: 1px solid var(--border); }
+.ph-tag { font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--ink4); margin-bottom: 8px; }
+.ph-title { font-size: 32px; font-weight: 900; letter-spacing: -1.5px; text-transform: uppercase; color: var(--ink); line-height: 1; }
+.ph-title span { color: var(--yellow2); }
+
+.card-block {
+  margin: 16px 20px 0;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r2);
+  padding: 18px;
+}
+.cb-title { font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--ink3); margin-bottom: 14px; }
+
+.member-found {
+  margin-top: 10px;
+  padding: 13px 14px;
+  background: #fffbea;
+  border: 1.5px solid rgba(224,180,0,0.3);
+  border-radius: var(--r);
+  display: none;
+}
+.member-found.show { display: block; }
+.mf-name { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; color: var(--ink); margin-bottom: 2px; }
+.mf-info { font-size: 11px; color: var(--ink3); font-weight: 500; }
+
+.pts-preview { text-align: center; padding: 14px 0 6px; display: none; }
+.pts-preview.show { display: block; }
+.ppn { font-size: 40px; font-weight: 900; letter-spacing: -2px; color: var(--ink); line-height: 1; }
+.ppl { font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ink4); margin-top: 4px; }
+
+.toggle-pair { display: flex; gap: 8px; }
+.tog {
+  flex: 1; padding: 10px;
+  border-radius: var(--r); border: 1.5px solid var(--border);
+  background: var(--white); color: var(--ink4);
+  font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s; font-family: 'Montserrat', sans-serif;
+}
+.tog.on { border-color: var(--ink); background: var(--ink); color: var(--white); }
+
+/* Member list */
+.ml-search { margin: 14px 20px 0; position: relative; }
+.ml-search-input {
+  width: 100%; padding: 11px 14px 11px 36px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r2); color: var(--ink); font-size: 12px;
+  font-weight: 500; outline: none; transition: border-color 0.2s;
+  font-family: 'Montserrat', sans-serif;
+}
+.ml-search-input::placeholder { color: var(--ink4); }
+.ml-search-input:focus { border-color: var(--yellow2); }
+.ml-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; stroke: var(--ink4); }
+.member-list { padding: 0 20px; }
+.ml-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity 0.2s; }
+.ml-row:hover { opacity: 0.65; }
+.ml-row:last-child { border-bottom: none; }
+.ml-av { width: 34px; height: 34px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--ink3); overflow: hidden; }
+.ml-av img { width: 100%; height: 100%; object-fit: cover; }
+.ml-info { flex: 1; }
+.ml-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.ml-meta { font-size: 10px; color: var(--ink4); margin-top: 2px; font-weight: 500; }
+.ml-tier-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ml-tier-dot.silver { background: #9ab; }
+.ml-tier-dot.gold { background: var(--yellow2); }
+.ml-tier-dot.black { background: var(--ink); }
+.ml-tier-dot.blackgold { background: var(--yellow2); box-shadow: 0 0 5px rgba(224,180,0,0.5); }
+
+/* ══════════════════════════════════════════
+   SHOP PAGE
+══════════════════════════════════════════ */
+.shop-hero { padding: 24px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; gap: 14px; }
+.shop-pts-big { font-size: 52px; font-weight: 900; letter-spacing: -3px; color: var(--ink); line-height: 1; }
+.shop-pts-meta { padding-bottom: 6px; }
+.shop-pts-lbl { font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ink4); }
+.shop-pts-tier { font-size: 12px; font-weight: 600; color: var(--ink3); margin-top: 4px; }
+
+.shop-tabs { display: flex; gap: 20px; padding: 0 20px; border-bottom: 1px solid var(--border); }
+.s-tab { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink4); background: none; border: none; padding: 13px 0; cursor: pointer; position: relative; transition: color 0.2s; }
+.s-tab.active { color: var(--ink); }
+.s-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1.5px; background: var(--ink); }
+
+.s-tab-content { display: none; }
+.s-tab-content.active { display: block; }
+
+.reward-grid { padding: 16px 20px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.r-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r2); padding: 18px 14px;
+  cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+}
+.r-card:hover { border-color: var(--ink); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(36,36,36,0.08); }
+.rc-icon { font-size: 28px; margin-bottom: 12px; }
+.rc-name { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 10px; line-height: 1.4; }
+.rc-pts { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: var(--ink); }
+.rc-pts span { font-size: 8px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink4); }
+.rc-badge { position: absolute; top: 10px; right: 10px; font-size: 8px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 3px 7px; border-radius: 5px; }
+.badge-hot { background: rgba(220,60,40,0.08); color: #cc3820; }
+.badge-new { background: var(--ink); color: var(--white); }
+.badge-vip { background: var(--yellow); color: var(--ink); }
+
+/* ══════════════════════════════════════════
+   PROFILE PAGE
+══════════════════════════════════════════ */
+.profile-hero { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 16px; align-items: center; }
+.profile-av {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--surface); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 800; color: var(--ink3);
+  flex-shrink: 0; overflow: hidden; cursor: pointer;
+}
+.profile-av img { width: 100%; height: 100%; object-fit: cover; }
+.profile-name { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: var(--ink); margin-bottom: 4px; }
+.profile-tier {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--yellow);
+  border-radius: 6px;
+  font-size: 8px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--ink); margin-bottom: 4px;
+}
+.profile-phone { font-size: 11px; color: var(--ink4); font-weight: 500; }
+
+.profile-grid { padding: 14px 20px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pg-cell { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--r2); padding: 14px; }
+.pg-n { font-size: 22px; font-weight: 900; letter-spacing: -1px; color: var(--ink); }
+.pg-l { font-size: 8px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink4); margin-top: 3px; }
+
+.settings-list { padding: 0 20px; }
+.s-row { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); gap: 12px; cursor: pointer; transition: opacity 0.2s; }
+.s-row:last-child { border-bottom: none; }
+.s-row:hover { opacity: 0.65; }
+.s-ico { width: 30px; height: 30px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+.s-info { flex: 1; }
+.s-label { font-size: 13px; font-weight: 500; color: var(--ink); }
+.s-val { font-size: 11px; color: var(--ink4); margin-top: 1px; }
+
+/* ══════════════════════════════════════════
+   REFER PAGE
+══════════════════════════════════════════ */
+.ref-block {
+  margin: 20px 20px 0;
+  background: var(--ink);
+  border-radius: var(--r3);
+  padding: 28px 20px;
+  text-align: center;
+}
+.ref-tag { font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 12px; }
+.ref-code { font-size: 38px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: var(--yellow); margin-bottom: 14px; line-height: 1; }
+.ref-desc { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.45); line-height: 1.8; margin-bottom: 18px; }
+.ref-desc strong { color: var(--yellow); font-weight: 700; }
+.btn-white { width: 100%; padding: 12px; background: var(--white); color: var(--ink); border: none; border-radius: var(--r); font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: opacity 0.2s; }
+.btn-white:hover { opacity: 0.88; }
+
+/* ══════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════ */
+.modal-bg {
+  position: fixed; inset: 0; z-index: 800;
+  background: rgba(36,36,36,0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none; align-items: flex-end; justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal-sheet {
+  width: 100%; max-width: 430px;
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  padding: 10px 20px max(32px,env(safe-area-inset-bottom));
+  animation: sheetUp 0.38s cubic-bezier(0.16,1,0.3,1);
+  border-top: 1px solid var(--border);
+  max-height: 90vh; overflow-y: auto;
+}
+@keyframes sheetUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-handle { width: 28px; height: 3px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+.modal-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; color: var(--ink); margin-bottom: 5px; }
+.modal-sub { font-size: 12px; font-weight: 500; color: var(--ink4); margin-bottom: 20px; line-height: 1.5; }
+
+.redeem-preview { display: flex; gap: 12px; align-items: center; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--r2); padding: 14px; margin-bottom: 20px; }
+.rp-ico { font-size: 28px; }
+.rp-name { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 3px; }
+.rp-pts { font-size: 12px; color: var(--ink4); font-weight: 500; }
+
+.md-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.md-cell { background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--r2); padding: 13px; }
+.md-n { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: var(--ink); }
+.md-l { font-size: 8px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink4); margin-top: 3px; }
+
+/* ── RESERVATION LINK ── */
+.reserve-banner {
+  margin: 14px 20px 0;
+  background: var(--yellow);
+  border-radius: var(--r2);
+  padding: 16px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+.reserve-banner:hover { background: var(--yellow2); }
+.rb-left .rb-tag { font-size: 8px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: rgba(36,36,36,0.55); }
+.rb-left .rb-title { font-size: 15px; font-weight: 900; letter-spacing: -0.3px; color: var(--ink); margin-top: 2px; }
+.rb-arrow { font-size: 20px; font-weight: 800; color: var(--ink); }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 80px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--ink); color: var(--white);
+  padding: 10px 18px; border-radius: 100px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+  z-index: 999; opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  white-space: nowrap; pointer-events: none;
+  max-width: 300px; text-align: center;
+  box-shadow: 0 8px 32px rgba(36,36,36,0.2);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.divider { height: 1px; background: var(--border); margin: 0 20px; }
+.spacer { height: 16px; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadScreen">
+  <div class="ls-logo">WEEEE</div>
+  <div class="ls-tag">Loyalty Programme</div>
+  <div class="ls-bar"></div>
+</div>
+
+<!-- AUTH — Single unified login -->
+<div id="authWrap">
+  <div class="auth-logo">WEEEE</div>
+  <div class="auth-tag">Loyalty Programme</div>
+
+  <!-- Step 1: Phone + Name -->
+  <div id="otp-step1" style="width:100%;max-width:340px;">
+    <div class="auth-panel-title" style="margin-bottom:6px;">
+      Welcome<br><span>Back</span>
+    </div>
+    <div class="auth-panel-sub">
+      Enter your WhatsApp number to login or register<br>
+      <span style="font-size:10px;color:var(--ink4);">Staff accounts are automatically recognised · 员工账号自动识别</span>
+    </div>
+    <div class="field">
+      <label class="field-label">WhatsApp Number · 手机号码</label>
+      <input class="field-input" type="tel" id="loginPhone" placeholder="+60123456789"
+        onkeydown="if(event.key==='Enter')sendMemberOtp()">
+    </div>
+    <div id="nameField" class="field" style="display:none">
+      <label class="field-label">Your Name · 你的名字 <span style="font-weight:400;opacity:0.6;">(new member)</span></label>
+      <input class="field-input" type="text" id="loginName" placeholder="Ahmad / Wei Ming">
+    </div>
+    <button class="btn btn-yellow" id="sendOtpBtn" onclick="sendMemberOtp()">
+      Send OTP · 发送验证码
+    </button>
+    <div id="msg-step1" class="msg"></div>
+  </div>
+
+  <!-- Step 2: OTP verification -->
+  <div id="otp-step2" style="display:none;width:100%;max-width:340px;">
+    <div class="auth-panel-title" style="margin-bottom:6px;">
+      Enter<br><span>OTP</span>
+    </div>
+    <div class="otp-hint">
+      OTP sent to your WhatsApp · 验证码已发到你的 WhatsApp
+    </div>
+    <div class="field">
+      <label class="field-label">6-Digit OTP · 6位验证码</label>
+      <input class="field-input" type="number" id="otpCode" placeholder="123456"
+        onkeydown="if(event.key==='Enter')verifyMemberOtp()">
+    </div>
+    <div id="otpCountdown" class="countdown"></div>
+    <button class="btn" id="verifyOtpBtn" onclick="verifyMemberOtp()">
+      Verify · 验证
+    </button>
+    <button class="btn btn-outline" id="resendOtpBtn" onclick="goBackOtp()"
+      style="margin-top:8px;display:none">
+      Resend · 重发
+    </button>
+    <div id="msg-step2" class="msg"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="top-bar">
+    <div class="tb-logo">WE<span>EEE</span></div>
+    <div class="tb-right">
+      <div class="admin-tag hidden" id="adminTag">Admin</div>
+      <div class="tb-avatar" id="tbAvatar" onclick="nav('profile')">
+        <span id="tbInit">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="card-outer">
+      <div class="card-scene">
+        <div class="m-card" id="mCard">
+          <div class="m-card-face t-gold" id="cardFace">
+            <div class="card-holo"></div>
+            <div class="card-geo"></div>
+            <div class="card-accent-bar"></div>
+            <div class="c-logo">
+              <div class="c-logo-name">WEEEE</div>
+              <div class="c-logo-sub">Loyalty</div>
+            </div>
+            <div class="c-tier" id="cTier">Gold</div>
+            <div class="c-name" id="cName">—</div>
+            <div class="c-phone" id="cPhone">—</div>
+            <div class="c-pts-block">
+              <div class="c-pts-num" id="cPts">0</div>
+              <div class="c-pts-label">Points</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tier-pills">
+      <button class="t-pill" data-tier="silver" onclick="previewTier('silver')">Silver</button>
+      <button class="t-pill active" data-tier="gold" onclick="previewTier('gold')">Gold</button>
+      <button class="t-pill" data-tier="black" onclick="previewTier('black')">Black</button>
+      <button class="t-pill" data-tier="blackgold" onclick="previewTier('blackgold')">Black Gold</button>
+    </div>
+
+    <!-- Reserve bingsu banner -->
+    <a class="reserve-banner" href="https://7sc55k-4000.csb.app/index.html" target="_blank">
+      <div class="rb-left">
+        <div class="rb-tag">🍧 Seasonal</div>
+        <div class="rb-title">Reserve Bingsu →</div>
+      </div>
+      <div class="rb-arrow">→</div>
+    </a>
+
+    <div class="stats-grid">
+      <div class="stat-cell"><div class="stat-n" id="sPoints">0</div><div class="stat-l">Points</div></div>
+      <div class="stat-cell"><div class="stat-n" id="sVisits">0</div><div class="stat-l">Visits</div></div>
+      <div class="stat-cell"><div class="stat-n" id="sStamps">0</div><div class="stat-l">Stamps</div></div>
+    </div>
+
+    <div class="progress-block" id="progBlock">
+      <div class="pb-row">
+        <div class="pb-lbl" id="progLabel">Next Tier</div>
+        <div class="pb-val" id="progVal">—</div>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="stamp-block">
+      <div class="sb-header">
+        <div class="sb-title">Stamp Card · 买10送1</div>
+        <div class="sb-badge" id="stampBadge">0 / 10</div>
+      </div>
+      <div class="sb-sub" id="stampSub">10 more to go</div>
+      <div class="stamp-row" id="stampRow"></div>
+    </div>
+
+    <div class="section-header"><div class="sh-title">Recent Transactions</div></div>
+    <div class="tx-list" id="txList"></div>
+  </div>
+
+  <!-- EARN PAGE (Staff only) -->
+  <div class="page" id="page-earn">
+    <div class="page-hero">
+      <div class="ph-tag">Staff Console</div>
+      <div class="ph-title">Record<br><span>Points</span></div>
+    </div>
+
+    <div class="card-block">
+      <div class="cb-title">Lookup Member</div>
+      <div class="field">
+        <label class="field-label">Phone Number</label>
+        <input class="field-input" type="tel" id="lookupPhone" placeholder="+60123456789" oninput="lookupMember()">
+      </div>
+      <div class="member-found" id="memberFound">
+        <div class="mf-name" id="mfName">—</div>
+        <div class="mf-info" id="mfInfo">—</div>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <div class="cb-title">Add Points</div>
+      <div class="field">
+        <label class="field-label">Spend Amount (RM)</label>
+        <input class="field-input" type="number" id="spendAmt" placeholder="0.00" min="0" step="0.50" oninput="previewPts()">
+      </div>
+      <div class="pts-preview" id="ptsPreview">
+        <div class="ppn" id="ptsPreviewN">0</div>
+        <div class="ppl">Points to Add</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Note (optional)</label>
+        <input class="field-input" type="text" id="txNote" placeholder="e.g. Mangosteen Bingsu ×2">
+      </div>
+      <div class="field">
+        <label class="field-label">Stamp</label>
+        <div class="toggle-pair">
+          <button class="tog on" id="togY" onclick="setStamp(true)">Add Stamp</button>
+          <button class="tog" id="togN" onclick="setStamp(false)">No Stamp</button>
+        </div>
+      </div>
+      <button class="btn" onclick="addPoints()">Confirm Add Points</button>
+      <div id="msg-earn" class="msg"></div>
+    </div>
+
+    <div class="card-block">
+      <div class="cb-title">Register New Member</div>
+      <div class="field"><label class="field-label">Name</label><input class="field-input" type="text" id="sRegName" placeholder="Customer name"></div>
+      <div class="field"><label class="field-label">Phone (WhatsApp)</label><input class="field-input" type="tel" id="sRegPhone" placeholder="+60123456789"></div>
+      <div class="field"><label class="field-label">Birthday Month (optional)</label><input class="field-input" type="month" id="sRegBday"></div>
+      <button class="btn" onclick="staffRegister()">Register</button>
+      <div id="msg-reg" class="msg"></div>
+    </div>
+
+    <div id="adminMemberSection" class="hidden">
+      <div class="divider" style="margin-top:24px;"></div>
+      <div class="section-header"><div class="sh-title">All Members</div></div>
+      <div class="ml-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="ml-search-input" type="text" placeholder="Search name or phone" oninput="filterMembers(this.value)">
+      </div>
+      <div class="member-list" id="memberList" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- SHOP PAGE -->
+  <div class="page" id="page-shop">
+    <div class="shop-hero">
+      <div class="shop-pts-big" id="shopPts">0</div>
+      <div class="shop-pts-meta">
+        <div class="shop-pts-lbl">Points Available</div>
+        <div class="shop-pts-tier" id="shopTierLabel">—</div>
+      </div>
+    </div>
+
+    <div class="stamp-block" style="margin:16px 20px 0;">
+      <div class="sb-header">
+        <div class="sb-title">Stamp Redemption</div>
+        <div class="sb-badge" id="shopStampBadge">0 / 10</div>
+      </div>
+      <div class="sb-sub">
+        <strong id="shopStampsLeft">10</strong> more stamps to free drink
+      </div>
+      <div class="stamp-row" id="shopStampRow" style="margin-bottom:14px;"></div>
+      <button class="btn" id="drinkBtn" style="opacity:.35;" disabled onclick="redeemDrink()">Redeem Free Drink</button>
+    </div>
+
+    <div class="shop-tabs">
+      <button class="s-tab active" onclick="shopTab('coupons',this)">Coupons</button>
+      <button class="s-tab" onclick="shopTab('merch',this)">Merch</button>
+    </div>
+    <div class="s-tab-content active" id="sTab-coupons">
+      <div class="reward-grid" id="couponGrid"></div>
+    </div>
+    <div class="s-tab-content" id="sTab-merch">
+      <div class="reward-grid" id="merchGrid"></div>
+    </div>
+  </div>
+
+  <!-- REFER PAGE -->
+  <div class="page" id="page-refer">
+    <div class="page-hero">
+      <div class="ph-tag">Friends</div>
+      <div class="ph-title">Refer<br><span>Friends</span></div>
+    </div>
+    <div class="ref-block">
+      <div class="ref-tag">Your Referral Code</div>
+      <div class="ref-code" id="refCode">WEEEE0000</div>
+      <div class="ref-desc">Refer a friend and both of you get<br><strong>100 bonus points</strong></div>
+      <button class="btn-white" onclick="copyRef()">Copy Code</button>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="profile-hero">
+      <div class="profile-av" id="profileAv">
+        <span id="profileInit">—</span>
+      </div>
+      <div>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-tier" id="profileTier">Silver</div>
+        <div class="profile-phone" id="profilePhone">—</div>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <div class="pg-cell"><div class="pg-n" id="pgPts">0</div><div class="pg-l">Total Points</div></div>
+      <div class="pg-cell"><div class="pg-n" id="pgVisits">0</div><div class="pg-l">Visits</div></div>
+      <div class="pg-cell"><div class="pg-n" id="pgRefs">0</div><div class="pg-l">Referrals</div></div>
+      <div class="pg-cell"><div class="pg-n" id="pgSince">—</div><div class="pg-l">Joined</div></div>
+    </div>
+
+    <div class="section-header"><div class="sh-title">Settings</div></div>
+    <div class="settings-list">
+      <div class="s-row" onclick="openModal('editNameModal')">
+        <div class="s-ico">✏️</div>
+        <div class="s-info"><div class="s-label">Edit Name</div><div class="s-val" id="srName">—</div></div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink4)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="s-row" onclick="openModal('editBdayModal')">
+        <div class="s-ico">🎂</div>
+        <div class="s-info"><div class="s-label">Birthday Month</div><div class="s-val" id="srBday">Not set</div></div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink4)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="s-row" onclick="logout()">
+        <div class="s-ico">🚪</div>
+        <div class="s-info"><div class="s-label">Logout</div></div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink4)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="bnav-home" onclick="nav('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+      <span>Card</span>
+    </button>
+    <button class="nav-btn" id="bnav-earn" onclick="nav('earn')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      <span>Points</span>
+    </button>
+    <button class="nav-btn" id="bnav-shop" onclick="nav('shop')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span>Redeem</span>
+    </button>
+    <button class="nav-btn" id="bnav-refer" onclick="nav('refer')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Refer</span>
+    </button>
+    <button class="nav-btn" id="bnav-profile" onclick="nav('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Me</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="redeemModal" onclick="bgClose('redeemModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Confirm Redeem</div>
+    <div class="modal-sub">Points will be deducted immediately. Voucher valid for 30 mins.</div>
+    <div class="redeem-preview">
+      <div class="rp-ico" id="rpIco">—</div>
+      <div><div class="rp-name" id="rpName">—</div><div class="rp-pts"><span id="rpPts">0</span> points</div></div>
+    </div>
+    <button class="btn" style="margin-bottom:8px;" onclick="confirmRedeem()">Confirm</button>
+    <button class="btn btn-outline" onclick="closeModal('redeemModal')">Cancel</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="successModal" onclick="bgClose('successModal',event)">
+  <div class="modal-sheet" style="text-align:center;">
+    <div class="modal-handle"></div>
+    <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;">Redeemed ✓</div>
+    <div class="modal-title" id="successTitle" style="text-align:center;">—</div>
+    <div class="modal-sub" style="text-align:center;">Show this to our staff</div>
+    <div style="font-size:48px;margin:20px 0;">🎟️</div>
+    <button class="btn" onclick="closeModal('successModal')">Done</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="editNameModal" onclick="bgClose('editNameModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit Name</div>
+    <div class="field" style="margin-top:14px;"><label class="field-label">New Name</label><input class="field-input" type="text" id="editNameIn" placeholder="Your name"></div>
+    <button class="btn" style="margin-top:6px;" onclick="saveName()">Save</button>
+    <button class="btn btn-outline" onclick="closeModal('editNameModal')" style="margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="editBdayModal" onclick="bgClose('editBdayModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Birthday Month</div>
+    <div class="modal-sub">Double points in your birthday month!</div>
+    <div class="field"><label class="field-label">Month</label><input class="field-input" type="month" id="editBdayIn"></div>
+    <button class="btn" style="margin-top:6px;" onclick="saveBday()">Save</button>
+    <button class="btn btn-outline" onclick="closeModal('editBdayModal')" style="margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="memberDetailModal" onclick="bgClose('memberDetailModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+      <div class="ml-av" id="mdAv" style="width:44px;height:44px;font-size:18px;font-weight:800;"></div>
+      <div><div style="font-size:18px;font-weight:900;letter-spacing:-0.5px;color:var(--ink);" id="mdName">—</div><div style="font-size:11px;color:var(--ink4);font-weight:500;margin-top:2px;" id="mdMeta">—</div></div>
+    </div>
+    <div class="md-grid" id="mdGrid"></div>
+    <div class="field"><label class="field-label">Add Points Manually</label><input class="field-input" type="number" id="mdPtsIn" placeholder="Points"></div>
+    <button class="btn" style="margin-bottom:8px;" onclick="adminAddPts()">Add Points</button>
+    <button class="btn btn-outline" onclick="adminAddStamp()">+ Add Stamp</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG — Update these with your values
+// ══════════════════════════════════════════════
+const API = 'https://7sc55k-4000.csb.app';  // Your CodeSandbox backend
+const ADMIN_PASSWORD = 'OI76o667@6WBW';     // Your admin password from .env
+
+// Tier definitions
+const TIERS = {
+  silver:    { label:'Silver',     minPts:0,    multiplier:2,   nextTier:'gold',      nextPts:1000 },
+  gold:      { label:'Gold',       minPts:1000, multiplier:2.5, nextTier:'black',     nextPts:3000 },
+  black:     { label:'Black',      minPts:3000, multiplier:3,   nextTier:'blackgold', nextPts:6000 },
+  blackgold: { label:'Black Gold', minPts:6000, multiplier:4,   nextTier:null,        nextPts:null }
+};
+const TIER_CLASS = { silver:'t-silver', gold:'t-gold', black:'t-black', blackgold:'t-blackgold' };
+
+function getTier(pts) {
+  if (pts >= 6000) return 'blackgold';
+  if (pts >= 3000) return 'black';
+  if (pts >= 1000) return 'gold';
+  return 'silver';
+}
+
+// ── STATE ──
+let CU = null;
+let IS_STAFF = false;
+let PENDING = null;
+let STAMP_ON = true;
+let SEL_MEMBER = null;
+let ALL_MEMBERS = [];
+let SHOP_ITEMS = [];
+let otpTimer = null;
+
+// ══════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Loading screen
+  setTimeout(() => {
+    document.getElementById('loadScreen').classList.add('out');
+    setTimeout(() => {
+      document.getElementById('loadScreen').style.display = 'none';
+      document.getElementById('authWrap').classList.add('show');
+    }, 700);
+  }, 2200);
+});
+
+// ══════════════════════════════════════════════
+//  AUTH — Unified single-entry (auto-detect staff)
+// ══════════════════════════════════════════════
+// Add your staff WhatsApp numbers here (with country code)
+const STAFF_PHONES = [];  // e.g. ['+60123456789', '+60198765432']
+
+function isStaffPhone(phone) {
+  return STAFF_PHONES.includes(phone);
+}
+
+function resetAuth() {
+  document.getElementById('otp-step1').style.display = 'block';
+  document.getElementById('otp-step2').style.display = 'none';
+  document.getElementById('nameField').style.display = 'none';
+  document.getElementById('loginPhone').value = '';
+  document.getElementById('loginName').value = '';
+  document.getElementById('otpCode').value = '';
+  clearMsg('msg-step1');
+  clearMsg('msg-step2');
+  if (otpTimer) clearInterval(otpTimer);
+}
+
+// ══════════════════════════════════════════════
+//  AUTH — Member OTP Login
+// ══════════════════════════════════════════════
+async function sendMemberOtp() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  if (!phone || !phone.startsWith('+')) {
+    return showMsgEl('msg-step1', 'Please enter a valid number with country code, e.g. +60123456789', 'error');
+  }
+  clearMsg('msg-step1');
+  const btn = document.getElementById('sendOtpBtn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    const res = await fetch(API + '/auth/send-otp', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    // Check if new member
+    const checkRes = await fetch(API + '/auth/check-member', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ phone })
+    });
+    const checkData = await checkRes.json();
+    if (!checkData.exists) {
+      document.getElementById('nameField').style.display = 'block';
+    }
+
+    document.getElementById('otp-step1').style.display = 'none';
+    document.getElementById('otp-step2').style.display = 'block';
+    startOtpTimer();
+  } catch(e) {
+    showMsgEl('msg-step1', e.message || 'Failed to send OTP', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send OTP';
+  }
+}
+
+function startOtpTimer() {
+  let secs = 120;
+  const el = document.getElementById('otpCountdown');
+  const resendBtn = document.getElementById('resendOtpBtn');
+  resendBtn.style.display = 'none';
+  if (otpTimer) clearInterval(otpTimer);
+  otpTimer = setInterval(() => {
+    secs--;
+    el.textContent = 'Expires in ' + secs + 's';
+    if (secs <= 0) {
+      clearInterval(otpTimer);
+      el.textContent = 'OTP expired';
+      resendBtn.style.display = 'block';
+    }
+  }, 1000);
+}
+
+function goBackOtp() {
+  document.getElementById('otp-step2').style.display = 'none';
+  document.getElementById('otp-step1').style.display = 'block';
+  if (otpTimer) clearInterval(otpTimer);
+}
+
+async function verifyMemberOtp() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  const code  = document.getElementById('otpCode').value.trim();
+  const name  = document.getElementById('loginName').value.trim();
+  if (!code || code.length !== 6) return showMsgEl('msg-step2', 'Please enter the 6-digit OTP', 'error');
+  clearMsg('msg-step2');
+  const btn = document.getElementById('verifyOtpBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+  try {
+    const res = await fetch(API + '/auth/verify-otp', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ phone, code, name })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    CU = data.member;
+    if (otpTimer) clearInterval(otpTimer);
+
+    // Auto-detect staff: check if phone is in STAFF_PHONES list
+    // OR check backend if this member is marked as staff
+    IS_STAFF = isStaffPhone(phone) || (CU.is_staff === true);
+
+    await enrichMember();
+    enterApp();
+  } catch(e) {
+    showMsgEl('msg-step2', e.message || 'Verification failed', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Verify · 验证';
+  }
+}
+
+async function enrichMember() {
+  // Load full member data from backend
+  try {
+    const res = await fetch(API + '/member/' + CU.id);
+    if (res.ok) {
+      const data = await res.json();
+      CU = { ...CU, ...data };
+    }
+  } catch(e) {}
+  // Set defaults if missing
+  if (!CU.points)       CU.points = 0;
+  if (!CU.stamps)       CU.stamps = 0;
+  if (!CU.visits)       CU.visits = 0;
+  if (!CU.tier)         CU.tier = getTier(CU.points);
+  if (!CU.transactions) CU.transactions = [];
+  if (!CU.referrals)    CU.referrals = 0;
+  if (!CU.join_year)    CU.join_year = new Date().getFullYear().toString();
+}
+
+// Staff login removed — staff are auto-detected by phone number after OTP
+
+function logout() {
+  CU = null; IS_STAFF = false;
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('authWrap').classList.add('show');
+  resetAuth();
+}
+
+// ══════════════════════════════════════════════
+//  ENTER APP
+// ══════════════════════════════════════════════
+async function enterApp() {
+  document.getElementById('authWrap').classList.remove('show');
+  const app = document.getElementById('app');
+  app.style.display = 'block';
+  requestAnimationFrame(() => app.classList.add('show'));
+
+  if (IS_STAFF) {
+    document.getElementById('adminTag').classList.remove('hidden');
+    document.getElementById('adminMemberSection').classList.remove('hidden');
+    await loadAllMembers();
+  }
+
+  await loadShopItems();
+  document.getElementById('refCode').textContent = 'WEEEE' + (CU.phone || '').slice(-4);
+  updateUI();
+  init3D();
+  renderShop();
+  nav('home');
+}
+
+// ══════════════════════════════════════════════
+//  SUPABASE DATA — via backend API
+// ══════════════════════════════════════════════
+async function saveMemberData(updates) {
+  try {
+    await fetch(API + '/member/update', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ member_id: CU.id, ...updates, token: ADMIN_PASSWORD })
+    });
+  } catch(e) {}
+  // Always update local CU
+  Object.assign(CU, updates);
+}
+
+async function loadAllMembers() {
+  try {
+    const res = await fetch(API + '/admin/members?token=' + ADMIN_PASSWORD);
+    if (res.ok) ALL_MEMBERS = await res.json();
+  } catch(e) { ALL_MEMBERS = []; }
+  renderMemberList();
+}
+
+async function loadShopItems() {
+  try {
+    const res = await fetch(API + '/shop-items');
+    if (res.ok) SHOP_ITEMS = await res.json();
+  } catch(e) { SHOP_ITEMS = []; }
+}
+
+// ══════════════════════════════════════════════
+//  3D CARD
+// ══════════════════════════════════════════════
+function init3D() {
+  const card = document.getElementById('mCard');
+  const scene = document.querySelector('.card-scene');
+  let raf;
+  scene.addEventListener('mousemove', e => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const r = scene.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = `rotateX(${-y*20}deg) rotateY(${x*26}deg) translateZ(10px)`;
+      card.style.transition = 'transform 0.04s linear';
+    });
+  });
+  scene.addEventListener('mouseleave', () => {
+    card.style.transform = 'rotateX(2deg) rotateY(-5deg)';
+    card.style.transition = 'transform 0.7s cubic-bezier(0.34,1.56,0.64,1)';
+  });
+  scene.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const r = scene.getBoundingClientRect();
+    const x = (e.touches[0].clientX - r.left) / r.width  - 0.5;
+    const y = (e.touches[0].clientY - r.top)  / r.height - 0.5;
+    card.style.transform = `rotateX(${-y*18}deg) rotateY(${x*22}deg)`;
+    card.style.transition = 'transform 0.04s linear';
+  }, { passive:false });
+  scene.addEventListener('touchend', () => {
+    card.style.transform = 'rotateX(2deg) rotateY(-5deg)';
+    card.style.transition = 'transform 0.7s cubic-bezier(0.34,1.56,0.64,1)';
+  });
+}
+
+function applyCard(tier) {
+  const face = document.getElementById('cardFace');
+  face.className = 'm-card-face ' + TIER_CLASS[tier];
+  document.getElementById('cTier').textContent = TIERS[tier].label.toUpperCase();
+}
+
+function previewTier(t) {
+  applyCard(t);
+  document.querySelectorAll('.t-pill').forEach(p => p.classList.toggle('active', p.dataset.tier === t));
+}
+
+// ══════════════════════════════════════════════
+//  STAMPS
+// ══════════════════════════════════════════════
+function renderStamps(containerId, count) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div');
+    d.className = 'sd' + (i < count ? ' on' : '') + (i === 9 ? ' free-slot' : '');
+    el.appendChild(d);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  MAIN UI UPDATE
+// ══════════════════════════════════════════════
+function updateUI() {
+  if (!CU) return;
+  const T = TIERS[CU.tier] || TIERS.silver;
+
+  // Card
+  applyCard(CU.tier);
+  document.getElementById('cName').textContent  = CU.name;
+  document.getElementById('cPhone').textContent = CU.phone;
+  document.getElementById('cPts').textContent   = (CU.points || 0).toLocaleString();
+
+  // Tier pills
+  document.querySelectorAll('.t-pill').forEach(p => p.classList.toggle('active', p.dataset.tier === CU.tier));
+
+  // Stats
+  document.getElementById('sPoints').textContent = (CU.points || 0).toLocaleString();
+  document.getElementById('sVisits').textContent = CU.visits || 0;
+  document.getElementById('sStamps').textContent = (CU.stamps || 0) + '/10';
+
+  // Progress
+  if (T.nextPts) {
+    const pct = Math.min(100, Math.round((CU.points / T.nextPts) * 100));
+    document.getElementById('progFill').style.width  = pct + '%';
+    document.getElementById('progLabel').textContent = 'Next: ' + TIERS[T.nextTier].label;
+    document.getElementById('progVal').textContent   = Math.max(0, T.nextPts - CU.points).toLocaleString() + ' pts to go';
+    document.getElementById('progBlock').style.display = 'block';
+  } else {
+    document.getElementById('progBlock').style.display = 'none';
+  }
+
+  // Stamps
+  const stampsLeft = Math.max(0, 10 - (CU.stamps || 0));
+  document.getElementById('stampBadge').textContent = (CU.stamps || 0) + ' / 10';
+  document.getElementById('stampSub').textContent   = stampsLeft > 0 ? stampsLeft + ' more to go' : 'Ready to redeem!';
+  renderStamps('stampRow', CU.stamps || 0);
+
+  // Shop
+  document.getElementById('shopPts').textContent       = (CU.points || 0).toLocaleString();
+  document.getElementById('shopTierLabel').textContent  = T.label + ' Member';
+  document.getElementById('shopStampBadge').textContent = (CU.stamps || 0) + ' / 10';
+  document.getElementById('shopStampsLeft').textContent = stampsLeft;
+  renderStamps('shopStampRow', CU.stamps || 0);
+  const db = document.getElementById('drinkBtn');
+  db.disabled = (CU.stamps || 0) < 10;
+  db.style.opacity = (CU.stamps || 0) >= 10 ? '1' : '.35';
+
+  // Top bar
+  document.getElementById('tbInit').textContent = CU.name ? CU.name[0] : '?';
+
+  // Profile
+  document.getElementById('profileName').textContent    = CU.name;
+  document.getElementById('profileTier').textContent    = T.label.toUpperCase();
+  document.getElementById('profilePhone').textContent   = CU.phone;
+  document.getElementById('profileInit').textContent    = CU.name ? CU.name[0] : '?';
+  document.getElementById('pgPts').textContent          = (CU.points || 0).toLocaleString();
+  document.getElementById('pgVisits').textContent       = CU.visits || 0;
+  document.getElementById('pgRefs').textContent         = CU.referrals || 0;
+  document.getElementById('pgSince').textContent        = CU.join_year || '2025';
+  document.getElementById('srName').textContent         = CU.name;
+  document.getElementById('srBday').textContent         = CU.birthday || 'Not set';
+
+  renderTx();
+}
+
+function renderTx() {
+  const el = document.getElementById('txList');
+  if (!el || !CU) return;
+  const txs = (CU.transactions || []).slice(0, 10);
+  if (!txs.length) {
+    el.innerHTML = '<div style="padding:16px 0;font-size:12px;color:var(--ink4);font-weight:500;">No transactions yet</div>';
+    return;
+  }
+  el.innerHTML = txs.map(t => `
+    <div class="tx-row">
+      <div class="tx-icon">${t.type === 'earn' ? '➕' : '🛍️'}</div>
+      <div class="tx-d">
+        <div class="tx-name">${t.label}</div>
+        <div class="tx-date">${t.date}</div>
+      </div>
+      <div class="tx-pts ${t.pts > 0 ? 'earn' : 'spend'}">${t.pts > 0 ? '+' : ''}${t.pts}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+function nav(p) {
+  document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b  => b.classList.remove('active'));
+  const page = document.getElementById('page-' + p);
+  if (page) page.classList.add('active');
+  const btn = document.getElementById('bnav-' + p);
+  if (btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+//  EARN (Staff)
+// ══════════════════════════════════════════════
+async function lookupMember() {
+  const phone = document.getElementById('lookupPhone').value.trim();
+  const box = document.getElementById('memberFound');
+  if (!phone || phone.length < 5) { box.classList.remove('show'); return; }
+  const found = ALL_MEMBERS.find(m => m.phone && (m.phone.includes(phone) || phone.includes(m.phone.replace(/\D/g,''))));
+  if (found) {
+    const T = TIERS[found.tier || 'silver'];
+    document.getElementById('mfName').textContent = found.name;
+    document.getElementById('mfInfo').textContent = T.label + ' · ' + (found.points || 0).toLocaleString() + ' pts · ' + (found.stamps || 0) + '/10 stamps';
+    box.classList.add('show');
+  } else { box.classList.remove('show'); }
+}
+
+function previewPts() {
+  const amt = parseFloat(document.getElementById('spendAmt').value);
+  const el  = document.getElementById('ptsPreview');
+  if (amt > 0) {
+    const multi = TIERS[CU ? CU.tier : 'silver'].multiplier;
+    document.getElementById('ptsPreviewN').textContent = Math.round(amt * multi);
+    el.classList.add('show');
+  } else el.classList.remove('show');
+}
+
+function setStamp(v) {
+  STAMP_ON = v;
+  document.getElementById('togY').classList.toggle('on', v);
+  document.getElementById('togN').classList.toggle('on', !v);
+}
+
+async function addPoints() {
+  const phone = document.getElementById('lookupPhone').value.trim();
+  const amt   = parseFloat(document.getElementById('spendAmt').value);
+  const note  = document.getElementById('txNote').value.trim();
+  if (!phone) { showMsgEl('msg-earn','Please lookup a member first','error'); return; }
+  if (!amt || amt <= 0) { showMsgEl('msg-earn','Please enter spend amount','error'); return; }
+
+  const found = ALL_MEMBERS.find(m => m.phone && m.phone.includes(phone.replace(/\+/,'')));
+  if (!found) { showMsgEl('msg-earn','Member not found','error'); return; }
+
+  const isBday = found.birthday && found.birthday.slice(5,7) === String(new Date().getMonth()+1).padStart(2,'0');
+  const multi  = TIERS[found.tier || 'silver'].multiplier * (isBday ? 2 : 1);
+  const pts    = Math.round(amt * multi);
+
+  try {
+    const res = await fetch(API + '/member/add-points', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        token: ADMIN_PASSWORD,
+        member_id: found.id,
+        points: pts,
+        add_stamp: STAMP_ON,
+        note: note || `Spend RM ${amt.toFixed(2)}`
+      })
+    });
+    if (!res.ok) throw new Error('Failed');
+    showMsgEl('msg-earn', found.name + ' +' + pts + ' pts' + (isBday ? ' 🎂 Birthday 2x!' : '') + (STAMP_ON ? ' +1 stamp' : ''), 'success');
+    document.getElementById('spendAmt').value = '';
+    document.getElementById('txNote').value = '';
+    document.getElementById('ptsPreview').classList.remove('show');
+    await loadAllMembers();
+  } catch(e) {
+    showMsgEl('msg-earn', 'Failed to add points', 'error');
+  }
+}
+
+async function staffRegister() {
+  const name  = document.getElementById('sRegName').value.trim();
+  const phone = document.getElementById('sRegPhone').value.trim();
+  const bday  = document.getElementById('sRegBday').value;
+  if (!name || !phone) { showMsgEl('msg-reg','Please fill in name and phone','error'); return; }
+
+  try {
+    const res = await fetch(API + '/admin/register', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: ADMIN_PASSWORD, name, phone, birthday: bday })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+    showMsgEl('msg-reg', name + ' registered as Silver member', 'success');
+    document.getElementById('sRegName').value = '';
+    document.getElementById('sRegPhone').value = '';
+    document.getElementById('sRegBday').value = '';
+    await loadAllMembers();
+  } catch(e) {
+    showMsgEl('msg-reg', e.message || 'Registration failed', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════
+//  MEMBER LIST
+// ══════════════════════════════════════════════
+function renderMemberList(filter='') {
+  const el = document.getElementById('memberList');
+  let members = ALL_MEMBERS;
+  if (filter) members = members.filter(m => (m.name||'').toLowerCase().includes(filter.toLowerCase()) || (m.phone||'').includes(filter));
+  el.innerHTML = members.map(m => `
+    <div class="ml-row" onclick="openMemberDetail('${m.id}')">
+      <div class="ml-av">${m.name ? m.name[0] : '?'}</div>
+      <div class="ml-info">
+        <div class="ml-name">${m.name}</div>
+        <div class="ml-meta">${m.phone} · ${(m.points||0).toLocaleString()} pts</div>
+      </div>
+      <div class="ml-tier-dot ${m.tier||'silver'}"></div>
+    </div>`).join('') || '<div style="padding:12px 0;font-size:12px;color:var(--ink4);">No results</div>';
+}
+function filterMembers(v) { renderMemberList(v); }
+
+function openMemberDetail(id) {
+  SEL_MEMBER = id;
+  const m = ALL_MEMBERS.find(x => x.id === id);
+  if (!m) return;
+  const T = TIERS[m.tier || 'silver'];
+  document.getElementById('mdAv').textContent   = m.name ? m.name[0] : '?';
+  document.getElementById('mdName').textContent = m.name;
+  document.getElementById('mdMeta').textContent = T.label + ' · ' + m.phone;
+  document.getElementById('mdGrid').innerHTML = [
+    ['Points', (m.points||0).toLocaleString()],
+    ['Stamps', (m.stamps||0) + '/10'],
+    ['Visits', m.visits || 0],
+    ['Tier',   T.label]
+  ].map(([l,v]) => `<div class="md-cell"><div class="md-n">${v}</div><div class="md-l">${l}</div></div>`).join('');
+  openModal('memberDetailModal');
+}
+
+async function adminAddPts() {
+  const m = ALL_MEMBERS.find(x => x.id === SEL_MEMBER);
+  const pts = parseInt(document.getElementById('mdPtsIn').value);
+  if (!pts || pts <= 0 || !m) { showToast('Please enter valid points'); return; }
+  try {
+    await fetch(API + '/member/add-points', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: ADMIN_PASSWORD, member_id: m.id, points: pts, note: 'Admin manual add' })
+    });
+    await loadAllMembers();
+    closeModal('memberDetailModal');
+    showToast('Added ' + pts + ' pts to ' + m.name);
+  } catch(e) { showToast('Failed'); }
+}
+
+async function adminAddStamp() {
+  const m = ALL_MEMBERS.find(x => x.id === SEL_MEMBER);
+  if (!m) return;
+  if ((m.stamps || 0) >= 10) { showToast('Stamps full — please redeem first'); return; }
+  try {
+    await fetch(API + '/member/add-stamp', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: ADMIN_PASSWORD, member_id: m.id })
+    });
+    await loadAllMembers();
+    closeModal('memberDetailModal');
+    showToast('Stamp added to ' + m.name);
+  } catch(e) { showToast('Failed'); }
+}
+
+// ══════════════════════════════════════════════
+//  SHOP
+// ══════════════════════════════════════════════
+function renderShop() {
+  const coupons = SHOP_ITEMS.filter(i => i.type === 'coupon');
+  const merch   = SHOP_ITEMS.filter(i => i.type === 'merch');
+  renderGrid('couponGrid', coupons);
+  renderGrid('merchGrid', merch);
+}
+
+function renderGrid(id, items) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const badgeLbl = { hot:'🔥 Hot', new:'New', vip:'VIP' };
+  el.innerHTML = items.map(item => `
+    <div class="r-card" onclick="startRedeem('${item.id}')">
+      ${item.badge ? `<div class="rc-badge badge-${item.badge}">${badgeLbl[item.badge]||item.badge}</div>` : ''}
+      <div class="rc-icon">${item.emoji}</div>
+      <div class="rc-name">${item.name}</div>
+      <div class="rc-pts">${item.points_required.toLocaleString()} <span>pts</span></div>
+    </div>`).join('') || '<div style="padding:20px;font-size:12px;color:var(--ink4);grid-column:span 2;text-align:center;">No items available</div>';
+}
+
+function shopTab(name, btn) {
+  document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.s-tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sTab-' + name).classList.add('active');
+}
+
+function startRedeem(id) {
+  const item = SHOP_ITEMS.find(i => i.id === id);
+  if (!item) return;
+  PENDING = item;
+  document.getElementById('rpIco').textContent  = item.emoji;
+  document.getElementById('rpName').textContent = item.name;
+  document.getElementById('rpPts').textContent  = item.points_required.toLocaleString();
+  openModal('redeemModal');
+}
+
+async function confirmRedeem() {
+  if (!PENDING || !CU) return;
+  if ((CU.points || 0) < PENDING.points_required) {
+    showToast('Not enough points. Need ' + (PENDING.points_required - CU.points) + ' more.');
+    closeModal('redeemModal');
+    return;
+  }
+  try {
+    const res = await fetch(API + '/member/redeem', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        member_id: CU.id,
+        item_id: PENDING.id,
+        item_name: PENDING.name,
+        points_used: PENDING.points_required
+      })
+    });
+    if (!res.ok) throw new Error('Redeem failed');
+    CU.points -= PENDING.points_required;
+    CU.transactions.unshift({ type:'spend', label:'Redeemed — ' + PENDING.name, pts: -PENDING.points_required, date:'Just now' });
+    updateUI();
+    closeModal('redeemModal');
+    document.getElementById('successTitle').textContent = PENDING.name;
+    openModal('successModal');
+    PENDING = null;
+  } catch(e) { showToast('Redemption failed'); }
+}
+
+async function redeemDrink() {
+  if (!CU || (CU.stamps || 0) < 10) return;
+  try {
+    await fetch(API + '/member/redeem-stamp', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ member_id: CU.id })
+    });
+    CU.stamps = 0;
+    CU.transactions.unshift({ type:'spend', label:'Stamp Redemption — Free Drink', pts:0, date:'Just now' });
+    updateUI();
+    document.getElementById('successTitle').textContent = 'Free Drink';
+    openModal('successModal');
+  } catch(e) { showToast('Redemption failed'); }
+}
+
+// ══════════════════════════════════════════════
+//  PROFILE
+// ══════════════════════════════════════════════
+async function saveName() {
+  const n = document.getElementById('editNameIn').value.trim();
+  if (!n) return;
+  await saveMemberData({ name: n });
+  updateUI();
+  closeModal('editNameModal');
+  showToast('Name updated');
+}
+
+async function saveBday() {
+  const b = document.getElementById('editBdayIn').value;
+  await saveMemberData({ birthday: b });
+  updateUI();
+  closeModal('editBdayModal');
+  showToast('Birthday saved — double points in your birthday month!');
+}
+
+// ══════════════════════════════════════════════
+//  REFER
+// ══════════════════════════════════════════════
+function copyRef() {
+  const code = document.getElementById('refCode').textContent;
+  navigator.clipboard?.writeText(code).catch(()=>{});
+  showToast('Referral code copied: ' + code);
+}
+
+// ══════════════════════════════════════════════
+//  MODALS & TOAST
+// ══════════════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function bgClose(id, e) { if (e.target === document.getElementById(id)) closeModal(id); }
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function showMsgEl(id, text, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+function clearMsg(id) {
+  const el = document.getElementById(id);
+  if (el) el.className = 'msg';
+}
+</script>
+</body>
+</html>
